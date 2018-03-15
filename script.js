@@ -43,11 +43,24 @@ function revealField(x, y) {
     if ((x >= width) || (y >= height)) {
         return
     }
-    if (fields[y][x].bomb) {
+    var field = fields[y][x]
+    if (field.revealed) {
+        return
+    }
+    if (field.bomb) {
         drawBox(x, y, "B", "red")
     }
     else {
-        drawBox(x, y, fields[y][x].surroundingBombs, "white")
+        drawBox(x, y, field.surroundingBombs, "white")
+    }
+    field.revealed = true
+    if (field.bomb) {
+        return
+    }
+    if (field.surroundingBombs == 0) {
+        forSurroundingFields(x, y, function (xm, yn, otherField) {
+            revealField(xm, yn)
+        })
     }
 }
 
@@ -81,14 +94,9 @@ function forFieldInMap(callback) {
     }
 }
 
-function countBombs(x, y) {
-    var n = -1
+function forSurroundingFields(x, y, callback) {
     var m = -1
-
-    if (fields[y][x].bomb) {
-        return
-    }
-
+    var n = -1
     while (n < 2) {
         if ((y + n < 0) || (y + n >= height)) {
             n += 1
@@ -103,14 +111,23 @@ function countBombs(x, y) {
                 m += 1
                 continue
             }
-            if (fields[y + n][x + m].bomb) {
-                fields[y][x].surroundingBombs += 1
-            }
+            callback(x + m, y + n, fields[y + n][x + m])
             m += 1
         }
         n += 1
         m = -1
     }
+}
+
+function countBombs(x, y) {
+    if (fields[y][x].bomb) {
+        return
+    }
+    forSurroundingFields(x, y, function (xm, yn, field) {
+        if (field.bomb) {
+            fields[y][x].surroundingBombs += 1
+        }
+    })
 }
 
 function newField() {
