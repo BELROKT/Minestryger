@@ -43,7 +43,12 @@ function revealField(x, y) {
     if ((x >= width) || (y >= height)) {
         return
     }
-    drawBox(x, y, fields[y][x], "white")
+    if (fields[y][x].bomb) {
+        drawBox(x, y, "B", "red")
+    }
+    else {
+        drawBox(x, y, fields[y][x].surroundingBombs, "white")
+    }
 }
 
 function randomBomb() {
@@ -80,7 +85,7 @@ function countBombs(x, y) {
     var n = -1
     var m = -1
 
-    if (fields[y][x] == "B") {
+    if (fields[y][x].bomb) {
         return
     }
 
@@ -98,13 +103,22 @@ function countBombs(x, y) {
                 m += 1
                 continue
             }
-            if (fields[y + n][x + m] == "B") {
-                fields[y][x] = fields[y][x] + 1
+            if (fields[y + n][x + m].bomb) {
+                fields[y][x].surroundingBombs += 1
             }
             m += 1
         }
         n += 1
         m = -1
+    }
+}
+
+function newField() {
+    return {
+        bomb: false,
+        revealed: false,
+        surroundingBombs: 0,
+        locked: false
     }
 }
 
@@ -115,11 +129,23 @@ while (ytal < height) {
     fields.push(subList)
     while (xtal < width) {
         drawBox(xtal, ytal, "", "grey")
-        fields[ytal].push(randomBomb())
-        xtal = xtal + 1
+        fields[ytal].push(newField())
+        xtal += 1
     }
-    ytal = ytal + 1
+    ytal += 1
     xtal = 0
+}
+
+var bombetal = 0
+
+while (bombetal < 99) {
+    var x = randomInteger(width)
+    var y = randomInteger(height)
+    if (fields[y][x].bomb == true) {
+        continue
+    }
+    fields[y][x].bomb = true
+    bombetal += 1
 }
 
 updateCounts()
