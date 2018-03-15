@@ -8,10 +8,10 @@ var width = 30
 var height = 16
 var size = 20
 
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
+canvas.width = width * (size + 1)
+canvas.height = height * (size + 1)
 context.fillStyle = "black"
-context.fillRect(0, 0, window.innerWidth, window.innerHeight)
+context.fillRect(0, 0, canvas.width, canvas.height)
 context.font = size + "px serif"
 context.textAlign = "center"
 
@@ -31,11 +31,18 @@ function drawBox(x, y, text, color) {
 }
 
 function clickBox(event) {
-    if (((event.clientX + 1) % (size + 1) == 0) || ((event.clientY + 1) % (size + 1) == 0)) {
+    var rect = canvas.getBoundingClientRect()
+    var mx = event.clientX - rect.left
+    var my = event.clientY - rect.top
+    if (((mx + 1) % (size + 1) == 0) || ((my + 1) % (size + 1) == 0)) {
         return
     }
-    var x = Math.floor(event.clientX / (size + 1))
-    var y = Math.floor(event.clientY / (size + 1))
+    var x = Math.floor(mx / (size + 1))
+    var y = Math.floor(my / (size + 1))
+    if (bombetal == 0) {
+        firstClick(x, y)
+        updateCounts()
+    }
     revealField(x, y)
 }
 
@@ -55,12 +62,27 @@ function revealField(x, y) {
     }
     field.revealed = true
     if (field.bomb) {
-        return
+        clearInterval(timerId)
+        forFieldInMap(function (i, j, otherField) {
+            if (otherField.bomb) {
+                revealField(i, j)
+            }
+        })
     }
-    if (field.surroundingBombs == 0) {
+    else if (field.surroundingBombs == 0) {
         forSurroundingFields(x, y, function (xm, yn, otherField) {
             revealField(xm, yn)
         })
+    }
+    var everythingRevealed = true
+    forFieldInMap(function (i, j, otherField) {
+        if ((!otherField.revealed) && (!otherField.bomb)) {
+            everythingRevealed = false
+        }
+
+    })
+    if (everythingRevealed) {
+        clearInterval(timerId)
     }
 }
 
@@ -154,17 +176,29 @@ while (ytal < height) {
 }
 
 var bombetal = 0
+var timerId
 
-while (bombetal < 99) {
-    var x = randomInteger(width)
-    var y = randomInteger(height)
-    if (fields[y][x].bomb == true) {
-        continue
+function firstClick(mx, my) {
+    fields[my][mx].bomb = true
+    while (bombetal < 99) {
+        var x = randomInteger(width)
+        var y = randomInteger(height)
+        if (fields[y][x].bomb == true) {
+            continue
+        }
+        fields[y][x].bomb = true
+        bombetal += 1
     }
-    fields[y][x].bomb = true
-    bombetal += 1
+    fields[my][mx].bomb = false
+    timer()
+    timerId = setInterval(timer, 1000)
 }
 
-updateCounts()
+var seconds = 0
+
+function timer() {
+    document.getElementById("timer").innerHTML = seconds
+    seconds += 1
+}
 
 canvas.addEventListener("click", clickBox)
