@@ -8,7 +8,7 @@ class Game {
         this.height = 16
         this.size = 20
         this.seconds = 0
-        this.bombetal = 0
+        this.bombetal = 99
         this.timerId
         this.fields = []
 
@@ -21,8 +21,10 @@ class Game {
     }
 
     clearMap() {
+        this.timerId = undefined
         this.seconds = 0
-        this.bombetal = 0
+        this.canvas.width = this.width * (this.size + 1)
+        this.canvas.height = this.height * (this.size + 1)
         this.context.fillStyle = "black"
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
         this.fields = []
@@ -45,6 +47,8 @@ class Game {
         this.context.fillStyle = color
         this.context.fillRect((this.size + 1) * x, (this.size + 1) * y, this.size, this.size)
         this.context.fillStyle = "black"
+        this.context.font = this.size + "px serif"
+        this.context.textAlign = "center"
         this.context.fillText(text, (this.size + 1) * x + 0.5 * this.size, (this.size + 1) * y + 0.8 * this.size)
     }
 
@@ -57,7 +61,7 @@ class Game {
         }
         var x = Math.floor(mx / (this.size + 1))
         var y = Math.floor(my / (this.size + 1))
-        if (this.bombetal == 0) {
+        if (this.timerId == undefined) {
             this.firstClick(x, y)
             this.updateCounts()
         }
@@ -67,14 +71,15 @@ class Game {
 
     firstClick(mx, my) {
         this.fields[my][mx].bomb = true
-        while (this.bombetal < 99) {
+        var b = 0
+        while (b < this.bombetal) {
             var x = randomInteger(this.width)
             var y = randomInteger(this.height)
             if (this.fields[y][x].bomb == true) {
                 continue
             }
             this.fields[y][x].bomb = true
-            this.bombetal += 1
+            b += 1
         }
         this.fields[my][mx].bomb = false
         this.timer()
