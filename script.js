@@ -4,12 +4,9 @@ var canvas = document.getElementById("kanvas")
 var context = canvas.getContext("2d")
 var xtal = 0
 var ytal = 0
-var width = 36
-var height = 4
+var width = 30
+var height = 16
 var size = 20
-
-width = window.innerWidth / (size + 1)
-height = window.innerHeight / (size + 1)
 
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
@@ -33,15 +30,82 @@ function drawBox(x, y, text, color) {
     context.fillText(text, (size + 1) * x + 0.5 * size, (size + 1) * y + 0.8 * size)
 }
 
-function updateBox(event) {
+function clickBox(event) {
     if (((event.clientX + 1) % (size + 1) == 0) || ((event.clientY + 1) % (size + 1) == 0)) {
         return
     }
     var x = Math.floor(event.clientX / (size + 1))
     var y = Math.floor(event.clientY / (size + 1))
+    revealField(x, y)
+}
 
+function revealField(x, y) {
+    if ((x >= width) || (y >= height)) {
+        return
+    }
     drawBox(x, y, fields[y][x], "white")
-    fields[y][x] = fields[y][x] + 1
+}
+
+function randomBomb() {
+    if (Math.random() < (99 / 480)) {
+        return "B"
+    }
+    else {
+        return 0
+    }
+}
+
+function revealMap() {
+    forFieldInMap(revealField)
+}
+
+function updateCounts() {
+    forFieldInMap(countBombs)
+}
+
+function forFieldInMap(callback) {
+    var x = 0
+    var y = 0
+    while (y < height) {
+        while (x < width) {
+            callback(x, y, fields[y][x])
+            x = x + 1
+        }
+        y = y + 1
+        x = 0
+    }
+}
+
+function countBombs(x, y) {
+    var n = -1
+    var m = -1
+
+    if (fields[y][x] == "B") {
+        return
+    }
+
+    while (n < 2) {
+        if ((y + n < 0) || (y + n >= height)) {
+            n += 1
+            continue
+        }
+        while (m < 2) {
+            if ((m == 0) && (n == 0)) {
+                m += 1
+                continue
+            }
+            if ((x + m < 0) || (x + m >= width)) {
+                m += 1
+                continue
+            }
+            if (fields[y + n][x + m] == "B") {
+                fields[y][x] = fields[y][x] + 1
+            }
+            m += 1
+        }
+        n += 1
+        m = -1
+    }
 }
 
 var fields = []
@@ -51,13 +115,13 @@ while (ytal < height) {
     fields.push(subList)
     while (xtal < width) {
         drawBox(xtal, ytal, "", "grey")
-        fields[ytal].push(0)
+        fields[ytal].push(randomBomb())
         xtal = xtal + 1
     }
     ytal = ytal + 1
     xtal = 0
 }
 
-//setInterval(updateBox,10)
+updateCounts()
 
-canvas.addEventListener("click", updateBox)
+canvas.addEventListener("click", clickBox)
