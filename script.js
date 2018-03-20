@@ -21,9 +21,10 @@ class Game {
         this.context.font = this.size + "px serif"
         this.context.textAlign = "center"
 
-        this.canvas.addEventListener("click", (event) => { this.clickBox(event) })
+        this.canvas.addEventListener("mouseup", (event) => { this.clickBox(event) })
         this.canvas.addEventListener("mousemove", (event) => { this.mouseMove(event) })
         this.canvas.addEventListener("mouseleave", (event) => { this.mouseLeave(event) })
+        this.canvas.addEventListener("contextmenu", (event) => { event.preventDefault() })
     }
 
     clearMap() {
@@ -41,8 +42,8 @@ class Game {
             var subList = []
             this.fields.push(subList)
             while (xtal < this.width) {
-                this.drawBox(xtal, ytal, "", "grey")
                 this.fields[ytal].push(new Field())
+                this.drawField(xtal, ytal)
                 xtal += 1
             }
             ytal += 1
@@ -64,6 +65,31 @@ class Game {
         this.context.fillText(text, (this.size + 1) * x + 0.5 * this.size, (this.size + 1) * y + 0.80 * this.size)
     }
 
+    drawField(x, y, hover) {
+        var field = this.fields[y][x]
+        var color = "grey"
+        var text = ""
+        if (field.revealed) {
+            if (field.bomb) {
+                color = "red"
+                text = "💣"
+            }
+            else {
+                color = "white"
+                text = field.surroundingBombs
+            }
+        }
+        else {
+            if (field.locked) {
+                text = "F"
+            }
+            if (hover) {
+                color = "lightgrey"
+            }
+        }
+        this.drawBox(x, y, text, color)
+    }
+
     gridPositionFromMousePosition(event) {
         var rect = this.canvas.getBoundingClientRect()
         var mx = event.clientX - rect.left
@@ -81,22 +107,42 @@ class Game {
         if (this.hasFinished()) {
             return
         }
-        if (this.timerId == undefined) {
-            this.firstClick(pos.x, pos.y)
-            this.updateCounts()
+        if (event.button == 0) {
+            this.leftClick(pos.x, pos.y)
         }
-        this.revealField(pos.x, pos.y)
+        if (event.button == 2) {
+            this.rightClick(pos.x, pos.y)
+        }
     }
 
+    leftClick(x, y) {
+        if (this.timerId == undefined) {
+            this.firstClick(x, y)
+            this.updateCounts()
+        }
+        this.revealField(x, y)
+    }
+
+    rightClick(x, y) {
+        if (this.timerId == undefined) {
+            return
+        }
+        if (this.fields[y][x].revealed) {
+            return
+        }
+        this.fields[y][x].locked = !this.fields[y][x].locked
+        this.drawField(x, y)
+    }
+    
     mouseMove(event) {
         var pos = this.gridPositionFromMousePosition(event)
         if (this.lastPos != undefined) {
             if (!this.fields[this.lastPos.y][this.lastPos.x].revealed) {
-                this.drawBox(this.lastPos.x, this.lastPos.y, "", "grey")
+                this.drawField(this.lastPos.x, this.lastPos.y)
             }
         }
         if (!this.fields[pos.y][pos.x].revealed) {
-            this.drawBox(pos.x, pos.y, "", "lightgrey")
+            this.drawField(pos.x, pos.y, true)
             this.lastPos = pos
         }
     }
@@ -104,7 +150,7 @@ class Game {
     mouseLeave(event) {
         if (this.lastPos != undefined) {
             if (!this.fields[this.lastPos.y][this.lastPos.x].revealed) {
-                this.drawBox(this.lastPos.x, this.lastPos.y, "", "grey")
+                this.drawField(this.lastPos.x, this.lastPos.y)
             }
         }
     }
@@ -149,13 +195,11 @@ class Game {
         if (field.revealed) {
             return
         }
-        if (field.bomb) {
-            this.drawBox(x, y, "💣", "red")
-        }
-        else {
-            this.drawBox(x, y, field.surroundingBombs, "white")
+        if (field.locked) {
+            return
         }
         field.revealed = true
+        this.drawField(x, y)
         if (field.bomb) {
             this.stopTimer()
             this.forFieldInMap((i, j, otherField) => {
