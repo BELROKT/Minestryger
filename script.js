@@ -12,6 +12,10 @@ class Game {
         this.timerId
         this.fields = []
 
+        var elements = document.getElementsByClassName("fyld")
+        elements[0].style.width = (this.width * (this.size + 1) - 43) / 2 + "px"
+        elements[1].style.width = (this.width * (this.size + 1) - 43) / 2 + "px"
+
         this.canvas.width = this.width * (this.size + 1)
         this.canvas.height = this.height * (this.size + 1)
         this.context.font = this.size + "px serif"
@@ -21,6 +25,7 @@ class Game {
     }
 
     clearMap() {
+        clearInterval(this.timerId)
         this.timerId = undefined
         this.seconds = 0
         this.canvas.width = this.width * (this.size + 1)
@@ -47,9 +52,14 @@ class Game {
         this.context.fillStyle = color
         this.context.fillRect((this.size + 1) * x, (this.size + 1) * y, this.size, this.size)
         this.context.fillStyle = "black"
-        this.context.font = this.size + "px serif"
+        if(text=="💣") {
+            this.context.font = (this.size - 8) + "px georgia"
+        }
+        else {
+            this.context.font = "bold " + (this.size - 4) + "px arial"
+        }
         this.context.textAlign = "center"
-        this.context.fillText(text, (this.size + 1) * x + 0.5 * this.size, (this.size + 1) * y + 0.8 * this.size)
+        this.context.fillText(text, (this.size + 1) * x + 0.5 * this.size, (this.size + 1) * y + 0.80 * this.size)
     }
 
     clickBox(event) {
@@ -95,7 +105,7 @@ class Game {
             return
         }
         if (field.bomb) {
-            this.drawBox(x, y, "B", "red")
+            this.drawBox(x, y, "💣", "red")
         }
         else {
             this.drawBox(x, y, field.surroundingBombs, "white")

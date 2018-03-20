@@ -1,0 +1,24 @@
+#timer {
+    width: 43px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    font-weight: bold;
+    color: red;
+    background-color: black;
+}
+.divklasse {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+#Genstart {
+    float: right;
+    width: 62px;
+    height: 20px;
+    line-height: 20px;
+    background-color: rgb(194, 194, 194);
+}
+#Genstart:hover {
+    background-color: rgb(128, 128, 128);
+}

@@ -5,14 +5,19 @@
 	<meta charset="utf-8">
 	<title>Bjørns test</title>
 	<link rel="stylesheet" type="text/css" href="style-reset.css" />
+	<link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 
 <body style="overflow: hidden;">
-	<div style="width:100%;display:flex;justify-content:center;">
+	<div class="divklasse">
 		<canvas id="kanvas" style="border-left: 1px solid black;border-top: 1px solid black;"></canvas>
 	</div>
-	<div style="width:100%;display:flex;justify-content:center;">
+	<div class="divklasse">
+		<div class="fyld"></div>
 		<div id="timer"></div>
+		<div class="fyld">
+			<button id="Genstart" onclick="game.clearMap()" > Genstart </button>
+		</div>
 	</div>
 
 	<script src="script.js">
