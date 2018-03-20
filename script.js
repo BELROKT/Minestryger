@@ -22,6 +22,8 @@ class Game {
         this.context.textAlign = "center"
 
         this.canvas.addEventListener("click", (event) => { this.clickBox(event) })
+        this.canvas.addEventListener("mousemove", (event) => { this.mouseMove(event) })
+        this.canvas.addEventListener("mouseleave", (event) => { this.mouseLeave(event) })
     }
 
     clearMap() {
@@ -52,7 +54,7 @@ class Game {
         this.context.fillStyle = color
         this.context.fillRect((this.size + 1) * x, (this.size + 1) * y, this.size, this.size)
         this.context.fillStyle = "black"
-        if(text=="💣") {
+        if (text == "💣") {
             this.context.font = (this.size - 8) + "px georgia"
         }
         else {
@@ -62,7 +64,7 @@ class Game {
         this.context.fillText(text, (this.size + 1) * x + 0.5 * this.size, (this.size + 1) * y + 0.80 * this.size)
     }
 
-    clickBox(event) {
+    gridPositionFromMousePosition(event) {
         var rect = this.canvas.getBoundingClientRect()
         var mx = event.clientX - rect.left
         var my = event.clientY - rect.top
@@ -71,16 +73,41 @@ class Game {
         }
         var x = Math.floor(mx / (this.size + 1))
         var y = Math.floor(my / (this.size + 1))
+        return { x: x, y: y }
+    }
+
+    clickBox(event) {
+        var pos = this.gridPositionFromMousePosition(event)
         if (this.hasFinished()) {
             return
         }
         if (this.timerId == undefined) {
-            this.firstClick(x, y)
+            this.firstClick(pos.x, pos.y)
             this.updateCounts()
         }
-        this.revealField(x, y)
+        this.revealField(pos.x, pos.y)
     }
 
+    mouseMove(event) {
+        var pos = this.gridPositionFromMousePosition(event)
+        if (this.lastPos != undefined) {
+            if (!this.fields[this.lastPos.y][this.lastPos.x].revealed) {
+                this.drawBox(this.lastPos.x, this.lastPos.y, "", "grey")
+            }
+        }
+        if (!this.fields[pos.y][pos.x].revealed) {
+            this.drawBox(pos.x, pos.y, "", "lightgrey")
+            this.lastPos = pos
+        }
+    }
+
+    mouseLeave(event) {
+        if (this.lastPos != undefined) {
+            if (!this.fields[this.lastPos.y][this.lastPos.x].revealed) {
+                this.drawBox(this.lastPos.x, this.lastPos.y, "", "grey")
+            }
+        }
+    }
 
     firstClick(mx, my) {
         this.fields[my][mx].bomb = true
