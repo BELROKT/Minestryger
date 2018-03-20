@@ -51,16 +51,11 @@ class Game {
         }
     }
 
-    drawBox(x, y, text, color) {
+    drawBox(x, y, text, color, textcolor = "black", textfont = "bold " + (this.size - 4) + "px arial") {
         this.context.fillStyle = color
         this.context.fillRect((this.size + 1) * x, (this.size + 1) * y, this.size, this.size)
-        this.context.fillStyle = "black"
-        if (text == "💣") {
-            this.context.font = (this.size - 8) + "px georgia"
-        }
-        else {
-            this.context.font = "bold " + (this.size - 4) + "px arial"
-        }
+        this.context.fillStyle = textcolor
+        this.context.font = textfont
         this.context.textAlign = "center"
         this.context.fillText(text, (this.size + 1) * x + 0.5 * this.size, (this.size + 1) * y + 0.80 * this.size)
     }
@@ -69,25 +64,59 @@ class Game {
         var field = this.fields[y][x]
         var color = "grey"
         var text = ""
+        var textfont = "bold " + (this.size - 4) + "px arial"
+        var textcolor = "black"
         if (field.revealed) {
             if (field.bomb) {
                 color = "red"
                 text = "💣"
+                textfont = this.context.font = (this.size - 8) + "px serif"
             }
             else {
                 color = "white"
-                text = field.surroundingBombs
+                if (field.surroundingBombs == 0) {
+                    text = ""
+                }
+                else {
+                    text = field.surroundingBombs
+                    if (field.surroundingBombs == 1) {
+                        textcolor = "#0100fe"
+                    }
+                    if (field.surroundingBombs == 2) {
+                        textcolor = "#017f01"
+                    }
+                    if (field.surroundingBombs == 3) {
+                        textcolor = "#fe0000"
+                    }
+                    if (field.surroundingBombs == 4) {
+                        textcolor = "#010080"
+                    }
+                    if (field.surroundingBombs == 5) {
+                        textcolor = "#810102"
+                    }
+                    if (field.surroundingBombs == 6) {
+                        textcolor = "#008081"
+                    }
+                    if (field.surroundingBombs == 7) {
+                        textcolor = "#000"
+                    }
+                    if (field.surroundingBombs == 8) {
+                        textcolor = "#808080"
+                    }
+                }
             }
         }
         else {
             if (field.locked) {
-                text = "F"
+                text = "⚑"
+                textfont = (this.size - 4) + "px serif"
+                textcolor = "red"
             }
             if (hover) {
                 color = "lightgrey"
             }
         }
-        this.drawBox(x, y, text, color)
+        this.drawBox(x, y, text, color, textcolor, textfont)
     }
 
     gridPositionFromMousePosition(event) {
@@ -133,7 +162,7 @@ class Game {
         this.fields[y][x].locked = !this.fields[y][x].locked
         this.drawField(x, y)
     }
-    
+
     mouseMove(event) {
         var pos = this.gridPositionFromMousePosition(event)
         if (this.lastPos != undefined) {
