@@ -25,9 +25,9 @@ class Game {
     }
 
     clearMap() {
-        clearInterval(this.timerId)
-        this.timerId = undefined
+        this.stopTimer()
         this.seconds = 0
+        document.getElementById("timer").innerHTML = this.seconds
         this.canvas.width = this.width * (this.size + 1)
         this.canvas.height = this.height * (this.size + 1)
         this.context.fillStyle = "black"
@@ -71,6 +71,9 @@ class Game {
         }
         var x = Math.floor(mx / (this.size + 1))
         var y = Math.floor(my / (this.size + 1))
+        if (this.hasFinished()) {
+            return
+        }
         if (this.timerId == undefined) {
             this.firstClick(x, y)
             this.updateCounts()
@@ -96,6 +99,21 @@ class Game {
         this.timerId = setInterval(() => { this.timer() }, 1000)
     }
 
+    hasFinished() {
+        if (this.timerId != undefined) {
+            return false
+        }
+        if (this.seconds > 0) {
+            return true
+        }
+        return false
+    }
+
+    stopTimer() {
+        clearInterval(this.timerId)
+        this.timerId = undefined
+    }
+
     revealField(x, y) {
         if ((x >= this.width) || (y >= this.height)) {
             return
@@ -112,7 +130,7 @@ class Game {
         }
         field.revealed = true
         if (field.bomb) {
-            clearInterval(this.timerId)
+            this.stopTimer()
             this.forFieldInMap((i, j, otherField) => {
                 if (otherField.bomb) {
                     this.revealField(i, j)
@@ -131,7 +149,7 @@ class Game {
             }
         })
         if (everythingRevealed) {
-            clearInterval(this.timerId)
+            this.stopTimer()
         }
     }
 
