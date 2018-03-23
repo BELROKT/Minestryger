@@ -32,3 +32,6 @@ input {
     width: 50%;
     float: left;
 }
+#rekordtid {
+    white-space: pre;
+}

@@ -11,6 +11,7 @@ class Game {
         this.bombCount = 99
         this.timerId
         this.fields = []
+        this.highscores = this.loadHighscore()
 
         var elements = document.getElementsByClassName("fyld")
         elements[0].style.width = (this.width * (this.size) - 40) / 2 + "px"
@@ -312,15 +313,44 @@ class Game {
                 this.revealField(xm, yn)
             })
         }
+        if (this.hasWon()) {
+            if (!this.hasFinished()) {
+                this.showHighscore()
+            }
+            this.stopTimer()
+        }
+    }
+
+    showHighscore() {
+        viewStats()
+        this.highscores.push(this.seconds - 1)
+        var text = ""
+        this.saveHighscore()
+        for (var i = 0; i < this.highscores.length; i += 1) {
+            text += this.highscores[i] + "\n"
+        }
+        document.getElementById("rekordtid").innerHTML = text
+    }
+
+    saveHighscore() {
+        localStorage.highscores = JSON.stringify(this.highscores)
+    }
+
+    loadHighscore() {
+        if (localStorage.highscores) {
+            return JSON.parse(localStorage.highscores)
+        }
+        return []
+    }
+
+    hasWon() {
         var everythingRevealed = true
         this.forFieldInMap((i, j, otherField) => {
             if ((!otherField.revealed) && (!otherField.bomb)) {
                 everythingRevealed = false
             }
         })
-        if (everythingRevealed) {
-            this.stopTimer()
-        }
+        return everythingRevealed
     }
 
     revealMap() {
