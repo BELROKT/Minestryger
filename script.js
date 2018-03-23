@@ -13,11 +13,11 @@ class Game {
         this.fields = []
 
         var elements = document.getElementsByClassName("fyld")
-        elements[0].style.width = (this.width * (this.size + 1) - 43) / 2 + "px"
-        elements[1].style.width = (this.width * (this.size + 1) - 43) / 2 + "px"
+        elements[0].style.width = (this.width * (this.size) - 40) / 2 + "px"
+        elements[1].style.width = (this.width * (this.size) - 40) / 2 + "px"
 
-        this.canvas.width = this.width * (this.size + 1)
-        this.canvas.height = this.height * (this.size + 1)
+        this.canvas.width = this.width * (this.size)
+        this.canvas.height = this.height * (this.size)
         this.context.font = this.size + "px serif"
         this.context.textAlign = "center"
 
@@ -31,8 +31,8 @@ class Game {
         this.stopTimer()
         this.seconds = 0
         document.getElementById("timer").innerHTML = this.seconds
-        this.canvas.width = this.width * (this.size + 1)
-        this.canvas.height = this.height * (this.size + 1)
+        this.canvas.width = this.width * (this.size)
+        this.canvas.height = this.height * (this.size)
         this.context.fillStyle = "black"
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
         this.fields = []
@@ -53,11 +53,11 @@ class Game {
 
     drawBox(x, y, text, color, textcolor = "black", textfont = "bold " + (this.size - 4) + "px arial") {
         this.context.fillStyle = color
-        this.context.fillRect((this.size + 1) * x, (this.size + 1) * y, this.size, this.size)
+        this.context.fillRect(this.size * x + 1, this.size * y + 1, this.size - 2, this.size - 2)
         this.context.fillStyle = textcolor
         this.context.font = textfont
         this.context.textAlign = "center"
-        this.context.fillText(text, (this.size + 1) * x + 0.5 * this.size, (this.size + 1) * y + 0.80 * this.size)
+        this.context.fillText(text, (this.size) * x + 0.5 * this.size, (this.size) * y + 0.80 * this.size)
     }
 
     drawField(x, y, hover) {
@@ -123,11 +123,8 @@ class Game {
         var rect = this.canvas.getBoundingClientRect()
         var mx = event.clientX - rect.left
         var my = event.clientY - rect.top
-        if (((mx + 1) % (this.size + 1) == 0) || ((my + 1) % (this.size + 1) == 0)) {
-            return
-        }
-        var x = Math.floor(mx / (this.size + 1))
-        var y = Math.floor(my / (this.size + 1))
+        var x = Math.floor(mx / this.size)
+        var y = Math.floor(my / this.size)
         return { x: x, y: y }
     }
 
@@ -158,7 +155,7 @@ class Game {
     middleClick(x, y) {
         var lockedFields = 0
         var field = this.fields[y][x]
-        
+
         if (!field.revealed) {
             return
         }
@@ -289,9 +286,9 @@ class Game {
         while (y < this.height) {
             while (x < this.width) {
                 callback(x, y, this.fields[y][x])
-                x = x + 1
+                x += 1
             }
-            y = y + 1
+            y += 1
             x = 0
         }
     }
