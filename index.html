@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>Bjørns test</title>
+	<title>Minestryger</title>
 	<link rel="stylesheet" type="text/css" href="style-reset.css" />
 	<link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
@@ -13,13 +13,16 @@
 		<canvas id="kanvas" style="border: 1px solid black" oncontextmenu="false" ></canvas>
 	</div>
 	<div class="divKlasse">
-		<div class="fyld"></div>
+		<div class="fyld">
+			<button onclick="viewSettings()">Indstillinger</button>
+			<button onclick="viewStats()">Statistik</button>
+		</div>
 		<div id="timer"></div>
 		<div class="fyld">
 			<button id="Genstart" onclick="game.clearMap()" > Genstart </button>
 		</div>
 	</div>
-	<div id="værdier" class="divKlasse">
+	<div id="værdier" class="divKlasse" style="display: none;">
 		<div style="width: 120px;">
 			<label>Vidde</label>
 			<input id="vidde" type="number" value="30" autocomplete="off">
@@ -29,6 +32,9 @@
 			<input id="bombeTal" type="number" value="99" autocomplete="off">
 			<button style="width: 100%;" onclick="game.updateAll()"> Opdatér </button>
 		</div>
+	</div>
+	<div id="statistik" class="divKlasse" style="display: none;">
+		LOL!!!
 	</div>
 
 	<script src="script.js">

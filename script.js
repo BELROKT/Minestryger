@@ -22,6 +22,7 @@ class Game {
         this.context.textAlign = "center"
 
         this.canvas.addEventListener("mouseup", (event) => { this.clickBox(event) })
+        this.canvas.addEventListener("mousedown", (event) => { this.clickRight(event) })
         this.canvas.addEventListener("mousemove", (event) => { this.mouseMove(event) })
         this.canvas.addEventListener("mouseleave", (event) => { this.mouseLeave(event) })
         this.canvas.addEventListener("contextmenu", (event) => { event.preventDefault() })
@@ -170,6 +171,13 @@ class Game {
         if (event.button == 1) {
             this.middleClick(pos.x, pos.y)
         }
+    }
+
+    clickRight(event) {
+        var pos = this.gridPositionFromMousePosition(event)
+        if (this.hasFinished()) {
+            return
+        }
         if (event.button == 2) {
             this.rightClick(pos.x, pos.y)
         }
@@ -216,8 +224,10 @@ class Game {
     mouseMove(event) {
         var pos = this.gridPositionFromMousePosition(event)
         if (this.lastPos != undefined) {
-            if (!this.fields[this.lastPos.y][this.lastPos.x].revealed) {
-                this.drawField(this.lastPos.x, this.lastPos.y)
+            if (this.isWithinGrid(this.lastPos.x, this.lastPos.y)) {
+                if (!this.fields[this.lastPos.y][this.lastPos.x].revealed) {
+                    this.drawField(this.lastPos.x, this.lastPos.y)
+                }
             }
         }
         if (!this.fields[pos.y][pos.x].revealed) {
@@ -232,6 +242,16 @@ class Game {
                 this.drawField(this.lastPos.x, this.lastPos.y)
             }
         }
+    }
+
+    isWithinGrid(x, y) {
+        if ((x < 0) || (x > this.width)) {
+            return false
+        }
+        if ((y < 0) || (y > this.height)) {
+            return false
+        }
+        return true
     }
 
     firstClick(mx, my) {
@@ -381,6 +401,16 @@ function randomInteger(number) {
 
 function randomColor() {
     return "rgb(" + randomInteger(255) + "," + randomInteger(255) + "," + randomInteger(255) + ")"
+}
+
+function viewSettings() {
+    document.getElementById("værdier").style.display = ""
+    document.getElementById("statistik").style.display = "none"
+}
+
+function viewStats() {
+    document.getElementById("statistik").style.display = ""
+    document.getElementById("værdier").style.display = "none"
 }
 
 var game = new Game()
