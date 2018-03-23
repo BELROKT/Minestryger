@@ -139,6 +139,9 @@ class Game {
         if (event.button == 0) {
             this.leftClick(pos.x, pos.y)
         }
+        if (event.button == 1) {
+            this.middleClick(pos.x, pos.y)
+        }
         if (event.button == 2) {
             this.rightClick(pos.x, pos.y)
         }
@@ -150,6 +153,25 @@ class Game {
             this.updateCounts()
         }
         this.revealField(x, y)
+    }
+
+    middleClick(x, y) {
+        var lockedFields = 0
+        var field = this.fields[y][x]
+        
+        if (!field.revealed) {
+            return
+        }
+        this.forSurroundingFields(x, y, (i, j, otherField) => {
+            if (otherField.locked) {
+                lockedFields += 1
+            }
+        })
+        if (lockedFields == field.surroundingBombs) {
+            this.forSurroundingFields(x, y, (i, j, otherField) => {
+                this.revealField(i, j)
+            })
+        }
     }
 
     rightClick(x, y) {
