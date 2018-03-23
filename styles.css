@@ -7,18 +7,28 @@
     color: red;
     background-color: black;
 }
-.divklasse {
+.divKlasse {
     width: 100%;
     display: flex;
     justify-content: center;
 }
 #Genstart {
     float: right;
-    width: 62px;
+}
+button {
     height: 20px;
     line-height: 20px;
     background-color: rgb(194, 194, 194);
+    padding: 0px 6px;
 }
-#Genstart:hover {
+button:hover {
     background-color: rgb(128, 128, 128);
+}
+label {
+    width: 50%;
+    float: left;
+}
+input {
+    width: 50%;
+    float: left;
 }

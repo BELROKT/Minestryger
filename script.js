@@ -8,7 +8,7 @@ class Game {
         this.height = 16
         this.size = 20
         this.seconds = 0
-        this.bombetal = 99
+        this.bombCount = 99
         this.timerId
         this.fields = []
 
@@ -119,6 +119,37 @@ class Game {
         this.drawBox(x, y, text, color, textcolor, textfont)
     }
 
+    updateAll() {
+        this.updateWidth()
+        this.updateHeight()
+        this.updateBombCount()
+        this.clearMap()
+    }
+
+    updateWidth() {
+        var count = document.getElementById("vidde").value
+        if (count < 1) {
+            count = 1
+        }
+        this.width = count
+    }
+
+    updateHeight() {
+        var count = document.getElementById("højde").value
+        if (count < 1) {
+            count = 1
+        }
+        this.height = count
+    }
+
+    updateBombCount() {
+        var count = document.getElementById("bombeTal").value
+        if (count >= this.width * this.height) {
+            count = this.width * this.height - 1
+        }
+        this.bombCount = count
+    }
+
     gridPositionFromMousePosition(event) {
         var rect = this.canvas.getBoundingClientRect()
         var mx = event.clientX - rect.left
@@ -206,7 +237,7 @@ class Game {
     firstClick(mx, my) {
         this.fields[my][mx].bomb = true
         var b = 0
-        while (b < this.bombetal) {
+        while (b < this.bombCount) {
             var x = randomInteger(this.width)
             var y = randomInteger(this.height)
             if (this.fields[y][x].bomb == true) {

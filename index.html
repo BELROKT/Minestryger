@@ -8,15 +8,26 @@
 	<link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 
-<body style="overflow: hidden;">
-	<div class="divklasse">
+<body style="overflow: hidden; background-color: lightblue;">
+	<div class="divKlasse">
 		<canvas id="kanvas" style="border: 1px solid black" oncontextmenu="false" ></canvas>
 	</div>
-	<div class="divklasse">
+	<div class="divKlasse">
 		<div class="fyld"></div>
 		<div id="timer"></div>
 		<div class="fyld">
 			<button id="Genstart" onclick="game.clearMap()" > Genstart </button>
+		</div>
+	</div>
+	<div id="værdier" class="divKlasse">
+		<div style="width: 120px;">
+			<label>Vidde</label>
+			<input id="vidde" type="number" value="30" autocomplete="off">
+			<label>Højde</label>
+			<input id="højde" type="number" value="16" autocomplete="off">
+			<label>Miner</label>
+			<input id="bombeTal" type="number" value="99" autocomplete="off">
+			<button style="width: 100%;" onclick="game.updateAll()"> Opdatér </button>
 		</div>
 	</div>
 
