@@ -9,6 +9,7 @@ class Game {
         this.size = 20
         this.seconds = 0
         this.bombCount = 99
+        this.bombsMarked = 0
         this.timerId
         this.fields = []
         this.highscores = this.loadHighscore()
@@ -33,6 +34,9 @@ class Game {
         this.stopTimer()
         this.seconds = 0
         document.getElementById("timer").innerHTML = this.seconds
+        this.bombsMarked = 0
+        this.bombsLeft = this.bombCount
+        this.bombsLeftToMark()
         this.canvas.width = this.width * (this.size)
         this.canvas.height = this.height * (this.size)
         this.context.fillStyle = "black"
@@ -220,6 +224,14 @@ class Game {
         }
         this.fields[y][x].locked = !this.fields[y][x].locked
         this.drawField(x, y)
+        if (this.fields[y][x].locked) {
+            this.bombsMarked += 1
+            this.bombsLeftToMark()
+        }
+        else {
+            this.bombsMarked -= 1
+            this.bombsLeftToMark()
+        }
     }
 
     mouseMove(event) {
@@ -413,6 +425,12 @@ class Game {
     timer() {
         document.getElementById("timer").innerHTML = this.seconds
         this.seconds += 1
+    }
+
+    bombsLeftToMark() {
+        this.bombsLeft = this.bombCount - this.bombsMarked
+
+        document.getElementById("mineTæller").innerHTML = this.bombsLeft
     }
 }
 
