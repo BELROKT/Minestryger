@@ -13,6 +13,8 @@ class Game {
         this.timerId
         this.fields = []
         this.highscores = this.loadHighscore()
+        this.rightMouseDown = false
+        this.leftMouseDown = false
 
         var elements = document.getElementsByClassName("fyld")
         elements[0].style.width = (this.width * (this.size) - 40) / 2 + "px"
@@ -23,8 +25,8 @@ class Game {
         this.context.font = this.size + "px serif"
         this.context.textAlign = "center"
 
-        this.canvas.addEventListener("mouseup", (event) => { this.clickBox(event) })
-        this.canvas.addEventListener("mousedown", (event) => { this.clickRight(event) })
+        this.canvas.addEventListener("mouseup", (event) => { this.mouseUp(event) })
+        this.canvas.addEventListener("mousedown", (event) => { this.mouseDown(event) })
         this.canvas.addEventListener("mousemove", (event) => { this.mouseMove(event) })
         this.canvas.addEventListener("mouseleave", (event) => { this.mouseLeave(event) })
         this.canvas.addEventListener("contextmenu", (event) => { event.preventDefault() })
@@ -36,7 +38,7 @@ class Game {
         document.getElementById("timer").innerHTML = this.seconds
         this.bombsMarked = 0
         this.bombsLeft = this.bombCount
-        this.bombsLeftToMark()
+        this.updateBombsLeft()
         this.canvas.width = this.width * (this.size)
         this.canvas.height = this.height * (this.size)
         this.context.fillStyle = "black"
@@ -165,25 +167,43 @@ class Game {
         return { x: x, y: y }
     }
 
-    clickBox(event) {
+    mouseUp(event) {
         var pos = this.gridPositionFromMousePosition(event)
         if (this.hasFinished()) {
             return
         }
         if (event.button == 0) {
+            this.leftMouseDown = false
+
             this.leftClick(pos.x, pos.y)
+
+            if (this.rightMouseDown) {
+                this.middleClick(pos.x, pos.y)
+            }
         }
         if (event.button == 1) {
             this.middleClick(pos.x, pos.y)
         }
+        if (event.button == 2) {
+            this.rightMouseDown = false
+
+            if (this.leftMouseDown) {
+                this.middleClick(pos.x, pos.y)
+            }
+        }
     }
 
-    clickRight(event) {
+    mouseDown(event) {
         var pos = this.gridPositionFromMousePosition(event)
         if (this.hasFinished()) {
             return
         }
+        if (event.button == 0) {
+            this.leftMouseDown = true
+        }
         if (event.button == 2) {
+            this.rightMouseDown = true
+
             this.rightClick(pos.x, pos.y)
         }
     }
@@ -216,6 +236,8 @@ class Game {
     }
 
     rightClick(x, y) {
+        this.rightMouseDown = true
+
         if (this.timerId == undefined) {
             return
         }
@@ -226,11 +248,11 @@ class Game {
         this.drawField(x, y)
         if (this.fields[y][x].locked) {
             this.bombsMarked += 1
-            this.bombsLeftToMark()
+            this.updateBombsLeft()
         }
         else {
             this.bombsMarked -= 1
-            this.bombsLeftToMark()
+            this.updateBombsLeft()
         }
     }
 
@@ -427,7 +449,7 @@ class Game {
         this.seconds += 1
     }
 
-    bombsLeftToMark() {
+    updateBombsLeft() {
         this.bombsLeft = this.bombCount - this.bombsMarked
 
         document.getElementById("mineTæller").innerHTML = this.bombsLeft
