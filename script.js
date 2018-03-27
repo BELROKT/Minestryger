@@ -15,10 +15,9 @@ class Game {
         this.highscores = this.loadHighscore()
         this.rightMouseDown = false
         this.leftMouseDown = false
+        this.allowFlags = true
 
-        var elements = document.getElementsByClassName("fyld")
-        elements[0].style.width = (this.width * (this.size) - 40) / 2 + "px"
-        elements[1].style.width = (this.width * (this.size) - 40) / 2 + "px"
+        this.setTempWidth()
 
         this.canvas.width = this.width * (this.size)
         this.canvas.height = this.height * (this.size)
@@ -39,6 +38,9 @@ class Game {
         this.bombsMarked = 0
         this.bombsLeft = this.bombCount
         this.updateBombsLeft()
+
+        this.setTempWidth()
+
         this.canvas.width = this.width * (this.size)
         this.canvas.height = this.height * (this.size)
         this.context.fillStyle = "black"
@@ -131,6 +133,7 @@ class Game {
         this.updateWidth()
         this.updateHeight()
         this.updateBombCount()
+        this.updateAllowFlags()
         this.clearMap()
     }
 
@@ -156,6 +159,16 @@ class Game {
             count = this.width * this.height - 1
         }
         this.bombCount = count
+    }
+
+    updateAllowFlags() {
+        this.allowFlags = document.getElementById("mineFlag").checked
+    }
+
+    updateSettings(width, height, bombCount) {
+        document.getElementById("vidde").value = width
+        document.getElementById("højde").value = height
+        document.getElementById("bombeTal").value = bombCount
     }
 
     gridPositionFromMousePosition(event) {
@@ -244,6 +257,9 @@ class Game {
         if (this.fields[y][x].revealed) {
             return
         }
+        if (this.allowFlags == false) {
+            return
+        }
         this.fields[y][x].locked = !this.fields[y][x].locked
         this.drawField(x, y)
         if (this.fields[y][x].locked) {
@@ -290,7 +306,8 @@ class Game {
     }
 
     firstClick(mx, my) {
-        this.fields[my][mx].bomb = true
+        var field = this.fields[my][mx]
+        field.bomb = true
         var b = 0
         while (b < this.bombCount) {
             var x = randomInteger(this.width)
@@ -301,9 +318,28 @@ class Game {
             this.fields[y][x].bomb = true
             b += 1
         }
-        this.fields[my][mx].bomb = false
-        this.timer()
-        this.timerId = setInterval(() => { this.timer() }, 1000)
+        field.bomb = false
+        var emptyFields = false
+        this.forFieldInMap((i, j, otherField) => {
+            this.countBombs(i, j)
+            if (otherField.surroundingBombs == 0) {
+                emptyFields = true
+            }
+        })
+        if ((field.surroundingBombs > 0)&&(emptyFields)) {
+            this.forFieldInMap((i, j, otherField) => {
+                otherField.surroundingBombs = 0
+                otherField.bomb = false
+            })
+            this.firstClick(mx, my)
+        }
+        else {
+            this.timer()
+            this.timerId = setInterval(() => { this.timer() }, 1000)
+            this.forFieldInMap((i, j, otherField) => {
+                otherField.surroundingBombs = 0
+            })
+        }
     }
 
     hasFinished() {
@@ -434,9 +470,6 @@ class Game {
     }
 
     countBombs(x, y) {
-        if (this.fields[y][x].bomb) {
-            return
-        }
         this.forSurroundingFields(x, y, (xm, yn, field) => {
             if (field.bomb) {
                 this.fields[y][x].surroundingBombs += 1
@@ -453,6 +486,16 @@ class Game {
         this.bombsLeft = this.bombCount - this.bombsMarked
 
         document.getElementById("mineTæller").innerHTML = this.bombsLeft
+    }
+
+    setTempWidth() {
+        var elements = document.getElementsByClassName("fyld")
+        var tempWidth = (this.width * (this.size) - 38) / 2
+        if (tempWidth < 143) {
+            tempWidth = 143
+        }
+        elements[0].style.width = tempWidth + "px"
+        elements[1].style.width = tempWidth + "px"
     }
 }
 

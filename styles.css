@@ -36,11 +36,14 @@ button:hover {
 }
 label {
     width: 50%;
+    height: 20px;
+    line-height: 20px;
     float: left;
 }
 input {
     width: 50%;
     float: left;
+    margin: 2px 0;
 }
 #rekordtid {
     white-space: pre;

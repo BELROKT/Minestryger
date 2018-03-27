@@ -31,6 +31,11 @@
 			<input id="højde" type="number" value="16" autocomplete="off">
 			<label>Miner</label>
 			<input id="bombeTal" type="number" value="99" autocomplete="off">
+			<label>Tillad flag</label>
+			<input id="mineFlag" type="checkbox" checked autocomplete="off">
+			<button style="width: 60%; margin: 5% 20%;" onclick="game.updateSettings(9, 9, 10)">Begynder</button>
+			<button style="width: 60%; margin: 0 20%;" onclick="game.updateSettings(16, 16, 40)">Øvet</button>
+			<button style="width: 60%; margin: 5% 20%;" onclick="game.updateSettings(30, 16, 99)">Avanceret</button>
 			<button style="width: 100%;" onclick="game.updateAll()"> Opdatér </button>
 		</div>
 	</div>
