@@ -22,6 +22,9 @@
     display: flex;
     justify-content: center;
 }
+.settingsRow {
+    display: inline-block;
+}
 #Genstart {
     float: right;
 }

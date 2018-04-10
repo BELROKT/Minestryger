@@ -14,6 +14,7 @@ class Game {
         this.fields = []
         this.highscores = this.loadHighscore()
         this.rightMouseDown = false
+        this.middleMouseDown = false
         this.leftMouseDown = false
         this.allowFlags = true
 
@@ -89,29 +90,15 @@ class Game {
                 }
                 else {
                     text = field.surroundingBombs
-                    if (field.surroundingBombs == 1) {
-                        textcolor = "#0100fe"
-                    }
-                    if (field.surroundingBombs == 2) {
-                        textcolor = "#017f01"
-                    }
-                    if (field.surroundingBombs == 3) {
-                        textcolor = "#fe0000"
-                    }
-                    if (field.surroundingBombs == 4) {
-                        textcolor = "#010080"
-                    }
-                    if (field.surroundingBombs == 5) {
-                        textcolor = "#810102"
-                    }
-                    if (field.surroundingBombs == 6) {
-                        textcolor = "#008081"
-                    }
-                    if (field.surroundingBombs == 7) {
-                        textcolor = "#000"
-                    }
-                    if (field.surroundingBombs == 8) {
-                        textcolor = "#808080"
+                    switch (field.surroundingBombs) {
+                        case 1: textcolor = "#0100fe"; break
+                        case 2: textcolor = "#017f01"; break
+                        case 3: textcolor = "#fe0000"; break
+                        case 4: textcolor = "#010080"; break
+                        case 5: textcolor = "#810102"; break
+                        case 6: textcolor = "#008081"; break
+                        case 7: textcolor = "#000"; break
+                        case 8: textcolor = "#808080"; break
                     }
                 }
             }
@@ -196,6 +183,7 @@ class Game {
         }
         if (event.button == 1) {
             this.middleClick(pos.x, pos.y)
+            this.middleMouseDown = false
         }
         if (event.button == 2) {
             this.rightMouseDown = false
@@ -204,6 +192,7 @@ class Game {
                 this.middleClick(pos.x, pos.y)
             }
         }
+        this.resetLastHoverPosition()
     }
 
     mouseDown(event) {
@@ -214,11 +203,15 @@ class Game {
         if (event.button == 0) {
             this.leftMouseDown = true
         }
+        if (event.button == 1) {
+            this.middleMouseDown = true
+        }
         if (event.button == 2) {
             this.rightMouseDown = true
 
             this.rightClick(pos.x, pos.y)
         }
+        this.showMiddleClickHover(pos)
     }
 
     leftClick(x, y) {
@@ -274,16 +267,39 @@ class Game {
 
     mouseMove(event) {
         var pos = this.gridPositionFromMousePosition(event)
+        if (this.lastPos !== undefined && pos.x == this.lastPos.x && pos.y == this.lastPos.y) {
+            return
+        }
+        this.resetLastHoverPosition()
+        if (!this.fields[pos.y][pos.x].revealed) {
+            this.drawField(pos.x, pos.y, true)
+        }
+        this.showMiddleClickHover(pos)
+        this.lastPos = pos
+    }
+
+    showMiddleClickHover(pos) {
+        if ((this.leftMouseDown && this.rightMouseDown) || (this.middleMouseDown)) {
+            this.forSurroundingFields(pos.x, pos.y, (i, j, otherField) => {
+                if (!otherField.locked && !otherField.revealed) {
+                    this.drawField(i, j, true)
+                }
+            })
+        }
+    }
+
+    resetLastHoverPosition() {
         if (this.lastPos != undefined) {
             if (this.isWithinGrid(this.lastPos.x, this.lastPos.y)) {
+                this.forSurroundingFields(this.lastPos.x, this.lastPos.y, (i, j, otherField) => {
+                    //if (!otherField.locked&&!otherField.revealed) {
+                    this.drawField(i, j)
+                    //}
+                })
                 if (!this.fields[this.lastPos.y][this.lastPos.x].revealed) {
                     this.drawField(this.lastPos.x, this.lastPos.y)
                 }
             }
-        }
-        if (!this.fields[pos.y][pos.x].revealed) {
-            this.drawField(pos.x, pos.y, true)
-            this.lastPos = pos
         }
     }
 
@@ -326,7 +342,7 @@ class Game {
                 emptyFields = true
             }
         })
-        if ((field.surroundingBombs > 0)&&(emptyFields)) {
+        if ((field.surroundingBombs > 0) && (emptyFields)) {
             this.forFieldInMap((i, j, otherField) => {
                 otherField.surroundingBombs = 0
                 otherField.bomb = false

@@ -25,12 +25,18 @@
 	</div>
 	<div id="værdier" class="divKlasse" style="display: none;">
 		<div style="width: 120px;">
-			<label>Vidde</label>
-			<input id="vidde" type="number" value="30" autocomplete="off">
-			<label>Højde</label>
-			<input id="højde" type="number" value="16" autocomplete="off">
-			<label>Miner</label>
-			<input id="bombeTal" type="number" value="99" autocomplete="off">
+			<div class="settingsRow">
+				<label>Vidde</label>
+				<input id="vidde" type="number" value="30" autocomplete="off">
+			</div>
+			<div class="settingsRow">
+				<label>Højde</label>
+				<input id="højde" type="number" value="16" autocomplete="off">
+			</div>
+			<div class="settingsRow">
+				<label>Miner</label>
+				<input id="bombeTal" type="number" value="99" autocomplete="off">
+			</div>
 			<label>Tillad flag</label>
 			<input id="mineFlag" type="checkbox" checked autocomplete="off">
 			<button style="width: 60%; margin: 5% 20%;" onclick="game.updateSettings(9, 9, 10)">Begynder</button>
