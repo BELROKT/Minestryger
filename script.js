@@ -409,7 +409,15 @@ class Game {
 
     showHighscore() {
         viewStats()
-        this.highscores.push(this.seconds - 1)
+        if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
+            //this.highscores.push(this.seconds - 1)
+        }
+        if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
+            //this.highscores.push(this.seconds - 1)
+        }
+        if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
+            this.highscores.push(this.seconds - 1)
+        }
         var text = ""
         this.saveHighscore()
         for (var i = 0; i < this.highscores.length; i += 1) {
