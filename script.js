@@ -12,7 +12,9 @@ class Game {
         this.bombsMarked = 0
         this.timerId
         this.fields = []
-        this.highscores = this.loadHighscore()
+        this.highscoresNewbie = this.loadHighscoreNewbie()
+        this.highscoresTrained = this.loadHighscoreTrained()
+        this.highscoresExpert = this.loadHighscoreExpert()
         this.rightMouseDown = false
         this.middleMouseDown = false
         this.leftMouseDown = false
@@ -410,29 +412,75 @@ class Game {
     showHighscore() {
         viewStats()
         if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
-            //this.highscores.push(this.seconds - 1)
+            this.highscoresNewbie.push(this.seconds - 1)
+            this.saveHighscoreNewbie()
+            var text = "Newbie\n"
+            for (var i = 0; i < this.highscoresNewbie.length; i += 1) {
+                text += this.highscoresNewbie[i] + "\n"
+            }
+            document.getElementById("bestTimeNewbie").innerHTML = text
         }
         if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
-            //this.highscores.push(this.seconds - 1)
+            this.highscoresTrained.push(this.seconds - 1)
+            this.saveHighscoreTrained()
+            var text = "Trained\n"
+            for (var i = 0; i < this.highscoresTrained.length; i += 1) {
+                text += this.highscoresTrained[i] + "\n"
+            }
+            document.getElementById("bestTimeTrained").innerHTML = text
         }
         if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
-            this.highscores.push(this.seconds - 1)
+            this.highscoresExpert.push(this.seconds - 1)
+            this.saveHighscoreExpert()
+            var text = "Expert\n"
+            for (var i = 0; i < this.highscoresExpert.length; i += 1) {
+                text += this.highscoresExpert[i] + "\n"
+            }
+            document.getElementById("bestTimeExpert").innerHTML = text
         }
-        var text = ""
-        this.saveHighscore()
-        for (var i = 0; i < this.highscores.length; i += 1) {
-            text += this.highscores[i] + "\n"
-        }
-        document.getElementById("rekordtid").innerHTML = text
     }
 
-    saveHighscore() {
-        localStorage.highscores = JSON.stringify(this.highscores)
+    saveHighscoreNewbie() {
+        this.highscoresNewbie.sort((a, b) => { return a - b })
+        if (this.highscoresNewbie.length > 10) {
+            this.highscoresNewbie.pop()
+        }
+        localStorage.highscoresNewbie = JSON.stringify(this.highscoresNewbie)
     }
 
-    loadHighscore() {
-        if (localStorage.highscores) {
-            return JSON.parse(localStorage.highscores)
+    saveHighscoreTrained() {
+        this.highscoresTrained.sort((a, b) => { return a - b })
+        if (this.highscoresTrained.length > 10) {
+            this.highscoresTrained.pop()
+        }
+        localStorage.highscoresTrained = JSON.stringify(this.highscoresTrained)
+    }
+
+    saveHighscoreExpert() {
+        this.highscoresExpert.sort((a, b) => { return a - b })
+        if (this.highscoresExpert.length > 10) {
+            this.highscoresExpert.pop()
+        }
+        localStorage.highscoresExpert = JSON.stringify(this.highscoresExpert)
+    }
+
+    loadHighscoreNewbie() {
+        if (localStorage.highscoresNewbie) {
+            return JSON.parse(localStorage.highscoresNewbie)
+        }
+        return []
+    }
+
+    loadHighscoreTrained() {
+        if (localStorage.highscoresTrained) {
+            return JSON.parse(localStorage.highscoresTrained)
+        }
+        return []
+    }
+
+    loadHighscoreExpert() {
+        if (localStorage.highscoresExpert) {
+            return JSON.parse(localStorage.highscoresExpert)
         }
         return []
     }

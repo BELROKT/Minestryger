@@ -48,6 +48,8 @@ input {
     float: left;
     margin: 2px 0;
 }
-#rekordtid {
+.bestTime {
     white-space: pre;
+    width: 100px;
+    text-align: center;
 }
