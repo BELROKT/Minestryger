@@ -406,6 +406,7 @@ class Game {
                 if (this.isNewScoreHighscore()) {
                     document.getElementById("bedsteTidNavn").style.display = ""
                     viewStats()
+                    this.showHighscore()
                 }
             }
             this.stopTimer()
@@ -450,13 +451,22 @@ class Game {
 
     isNewScoreHighscore() {
         if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
-            return (this.seconds - 1) < this.highscoresNewbie[9]
+            if (this.highscoresNewbie.length < 10) {
+                return true
+            }
+            return (this.seconds - 1) < this.highscoresNewbie[this.highscoresNewbie.length - 1]
         }
         if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
-            return (this.seconds - 1) < this.highscoresTrained[9]
+            if (this.highscoresTrained.length < 10) {
+                return true
+            }
+            return (this.seconds - 1) < this.highscoresTrained[this.highscoresTrained.length - 1]
         }
         if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
-            return (this.seconds - 1) < this.highscoresExpert[9]
+            if (this.highscoresExpert.length < 10) {
+                return true
+            }
+            return (this.seconds - 1) < this.highscoresExpert[this.highscoresExpert.length - 1]
         }
     }
 
