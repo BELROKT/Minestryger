@@ -15,13 +15,17 @@
 	<div class="divKlasse">
 		<div class="fyld">
 			<button onclick="viewSettings()">Indstillinger</button>
-			<button onclick="viewStats()">Statistik</button>
+			<button onclick="viewStats();game.showHighscore()">Statistik</button>
 		</div>
 		<div id="timer"></div>
 		<div class="fyld">
 			<button id="Genstart" onclick="game.clearMap()" > Genstart </button>
 			<div id="mineTæller"></div>
 		</div>
+	</div>
+	<div id="bedsteTidNavn" class="divKlasse" style="display: none;">
+		<input id="bedsteTidNavn" type="text" style="width: 100px;">
+		<button id="gemNyTid" onclick="game.updateHighscore()"> Gem </button>
 	</div>
 	<div id="værdier" class="divKlasse" style="display: none;">
 		<div style="width: 120px;">

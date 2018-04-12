@@ -111,7 +111,7 @@ class Game {
                 textfont = (this.size - 4) + "px serif"
                 textcolor = "red"
             }
-            if (hover) {
+            else if (hover) {
                 color = "lightgrey"
             }
         }
@@ -403,7 +403,10 @@ class Game {
         }
         if (this.hasWon()) {
             if (!this.hasFinished()) {
-                this.updateHighscore()
+                if (this.isNewScoreHighscore()) {
+                    document.getElementById("bedsteTidNavn").style.display = ""
+                    viewStats()
+                }
             }
             this.stopTimer()
         }
@@ -411,22 +414,21 @@ class Game {
 
     updateHighscore() {
         if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
-            this.highscoresNewbie.push(this.seconds - 1)
             this.saveHighscoreNewbie()
         }
         if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
-            this.highscoresTrained.push(this.seconds - 1)
             this.saveHighscoreTrained()
         }
         if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
-            this.highscoresExpert.push(this.seconds - 1)
             this.saveHighscoreExpert()
         }
         viewStats()
+        this.showHighscore()
+        document.getElementById("bedsteTidNavn").style.display = "none"
     }
 
     showHighscore() {
-        var text = "Nybegynder\n"
+        var text = "Begynder\n"
         for (var i = 0; i < this.highscoresNewbie.length; i += 1) {
             text += this.highscoresNewbie[i] + "\n"
         }
@@ -438,7 +440,7 @@ class Game {
         }
         document.getElementById("bestTimeTrained").innerHTML = text
 
-        text = "Avanceret\n"
+        text = "Ekspert\n"
         for (var i = 0; i < this.highscoresExpert.length; i += 1) {
             text += this.highscoresExpert[i] + "\n"
         }
@@ -446,7 +448,20 @@ class Game {
         
     }
 
+    isNewScoreHighscore() {
+        if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
+            return (this.seconds - 1) < this.highscoresNewbie[9]
+        }
+        if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
+            return (this.seconds - 1) < this.highscoresTrained[9]
+        }
+        if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
+            return (this.seconds - 1) < this.highscoresExpert[9]
+        }
+    }
+
     saveHighscoreNewbie() {
+        this.highscoresNewbie.push(this.seconds - 1)
         this.highscoresNewbie.sort((a, b) => { return a - b })
         if (this.highscoresNewbie.length > 10) {
             this.highscoresNewbie.pop()
@@ -455,6 +470,7 @@ class Game {
     }
 
     saveHighscoreTrained() {
+        this.highscoresTrained.push(this.seconds - 1)
         this.highscoresTrained.sort((a, b) => { return a - b })
         if (this.highscoresTrained.length > 10) {
             this.highscoresTrained.pop()
@@ -463,6 +479,7 @@ class Game {
     }
 
     saveHighscoreExpert() {
+        this.highscoresExpert.push(this.seconds - 1)
         this.highscoresExpert.sort((a, b) => { return a - b })
         if (this.highscoresExpert.length > 10) {
             this.highscoresExpert.pop()
@@ -602,7 +619,6 @@ function viewSettings() {
 function viewStats() {
     document.getElementById("statistik").style.display = ""
     document.getElementById("værdier").style.display = "none"
-    game.showHighscore()
 }
 
 var game = new Game()
