@@ -403,41 +403,47 @@ class Game {
         }
         if (this.hasWon()) {
             if (!this.hasFinished()) {
-                this.showHighscore()
+                this.updateHighscore()
             }
             this.stopTimer()
         }
     }
 
-    showHighscore() {
-        viewStats()
+    updateHighscore() {
         if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
             this.highscoresNewbie.push(this.seconds - 1)
             this.saveHighscoreNewbie()
-            var text = "Newbie\n"
-            for (var i = 0; i < this.highscoresNewbie.length; i += 1) {
-                text += this.highscoresNewbie[i] + "\n"
-            }
-            document.getElementById("bestTimeNewbie").innerHTML = text
         }
         if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
             this.highscoresTrained.push(this.seconds - 1)
             this.saveHighscoreTrained()
-            var text = "Trained\n"
-            for (var i = 0; i < this.highscoresTrained.length; i += 1) {
-                text += this.highscoresTrained[i] + "\n"
-            }
-            document.getElementById("bestTimeTrained").innerHTML = text
         }
         if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
             this.highscoresExpert.push(this.seconds - 1)
             this.saveHighscoreExpert()
-            var text = "Expert\n"
-            for (var i = 0; i < this.highscoresExpert.length; i += 1) {
-                text += this.highscoresExpert[i] + "\n"
-            }
-            document.getElementById("bestTimeExpert").innerHTML = text
         }
+        viewStats()
+    }
+
+    showHighscore() {
+        var text = "Nybegynder\n"
+        for (var i = 0; i < this.highscoresNewbie.length; i += 1) {
+            text += this.highscoresNewbie[i] + "\n"
+        }
+        document.getElementById("bestTimeNewbie").innerHTML = text
+
+        text = "Øvet\n"
+        for (var i = 0; i < this.highscoresTrained.length; i += 1) {
+            text += this.highscoresTrained[i] + "\n"
+        }
+        document.getElementById("bestTimeTrained").innerHTML = text
+
+        text = "Avanceret\n"
+        for (var i = 0; i < this.highscoresExpert.length; i += 1) {
+            text += this.highscoresExpert[i] + "\n"
+        }
+        document.getElementById("bestTimeExpert").innerHTML = text
+        
     }
 
     saveHighscoreNewbie() {
@@ -596,6 +602,7 @@ function viewSettings() {
 function viewStats() {
     document.getElementById("statistik").style.display = ""
     document.getElementById("værdier").style.display = "none"
+    game.showHighscore()
 }
 
 var game = new Game()
