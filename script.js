@@ -431,22 +431,22 @@ class Game {
     showHighscore() {
         var text = "Begynder\n"
         for (var i = 0; i < this.highscoresNewbie.length; i += 1) {
-            text += this.highscoresNewbie[i] + "\n"
+            text += this.highscoresNewbie[i].name + ": " + this.highscoresNewbie[i].score + "\n"
         }
         document.getElementById("bestTimeNewbie").innerHTML = text
 
         text = "Øvet\n"
         for (var i = 0; i < this.highscoresTrained.length; i += 1) {
-            text += this.highscoresTrained[i] + "\n"
+            text += this.highscoresTrained[i].name + ": " + this.highscoresTrained[i].score + "\n"
         }
         document.getElementById("bestTimeTrained").innerHTML = text
 
         text = "Ekspert\n"
         for (var i = 0; i < this.highscoresExpert.length; i += 1) {
-            text += this.highscoresExpert[i] + "\n"
+            text += this.highscoresExpert[i].name + ": " + this.highscoresExpert[i].score + "\n"
         }
         document.getElementById("bestTimeExpert").innerHTML = text
-        
+
     }
 
     isNewScoreHighscore() {
@@ -470,9 +470,16 @@ class Game {
         }
     }
 
+    getName() {
+        if (document.getElementById("skrivNavn").value == "") {
+            return "Ukendt"
+        }
+        return document.getElementById("skrivNavn").value
+    }
+
     saveHighscoreNewbie() {
-        this.highscoresNewbie.push(this.seconds - 1)
-        this.highscoresNewbie.sort((a, b) => { return a - b })
+        this.highscoresNewbie.push({ name: this.getName(), score: this.seconds - 1 })
+        this.highscoresNewbie.sort((a, b) => { return a.score - b.score })
         if (this.highscoresNewbie.length > 10) {
             this.highscoresNewbie.pop()
         }
@@ -480,8 +487,8 @@ class Game {
     }
 
     saveHighscoreTrained() {
-        this.highscoresTrained.push(this.seconds - 1)
-        this.highscoresTrained.sort((a, b) => { return a - b })
+        this.highscoresTrained.push({ name: this.getName(), score: this.seconds - 1 })
+        this.highscoresTrained.sort((a, b) => { return a.score - b.score })
         if (this.highscoresTrained.length > 10) {
             this.highscoresTrained.pop()
         }
@@ -489,8 +496,8 @@ class Game {
     }
 
     saveHighscoreExpert() {
-        this.highscoresExpert.push(this.seconds - 1)
-        this.highscoresExpert.sort((a, b) => { return a - b })
+        this.highscoresExpert.push({ name: this.getName(), score: this.seconds - 1 })
+        this.highscoresExpert.sort((a, b) => { return a.score - b.score })
         if (this.highscoresExpert.length > 10) {
             this.highscoresExpert.pop()
         }
