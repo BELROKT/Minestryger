@@ -53,3 +53,8 @@ input {
     width: 100px;
     text-align: center;
 }
+.grupper {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+}
