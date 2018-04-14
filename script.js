@@ -15,6 +15,9 @@ class Game {
         this.highscoresNewbie = this.loadHighscoreNewbie()
         this.highscoresTrained = this.loadHighscoreTrained()
         this.highscoresExpert = this.loadHighscoreExpert()
+        this.highscoresNewbieNoFlags = this.loadHighscoreNewbie()
+        this.highscoresTrainedNoFlags = this.loadHighscoreTrained()
+        this.highscoresExpertNoFlags = this.loadHighscoreExpert()
         this.rightMouseDown = false
         this.middleMouseDown = false
         this.leftMouseDown = false
@@ -415,13 +418,13 @@ class Game {
 
     updateHighscore() {
         if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
-            this.saveHighscoreNewbie()
+            this.saveHighscore("highscoreNewbie")
         }
         if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
-            this.saveHighscoreTrained()
+            this.saveHighscore("highscoreTrained")
         }
         if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
-            this.saveHighscoreExpert()
+            this.saveHighscore("highscoreExpert")
         }
         viewStats()
         this.showHighscore()
@@ -447,6 +450,23 @@ class Game {
         }
         document.getElementById("bestTimeExpert").innerHTML = text
 
+        var text = "Begynder\n"
+        for (var i = 0; i < this.highscoresNewbieNoFlags.length; i += 1) {
+            text += this.highscoresNewbieNoFlags[i].name + ": " + this.highscoresNewbieNoFlags[i].score + "\n"
+        }
+        document.getElementById("bestTimeNewbieNoFlags").innerHTML = text
+
+        text = "Øvet\n"
+        for (var i = 0; i < this.highscoresTrainedNoFlags.length; i += 1) {
+            text += this.highscoresTrainedNoFlags[i].name + ": " + this.highscoresTrainedNoFlags[i].score + "\n"
+        }
+        document.getElementById("bestTimeTrainedNoFlags").innerHTML = text
+
+        text = "Ekspert\n"
+        for (var i = 0; i < this.highscoresExpertNoFlags.length; i += 1) {
+            text += this.highscoresExpertNoFlags[i].name + ": " + this.highscoresExpertNoFlags[i].score + "\n"
+        }
+        document.getElementById("bestTimeExpertNoFlags").innerHTML = text
     }
 
     isNewScoreHighscore() {
@@ -468,6 +488,24 @@ class Game {
             }
             return (this.seconds - 1) < this.highscoresExpert[this.highscoresExpert.length - 1]
         }
+        if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
+            if (this.highscoresNewbieNoFlags.length < 10) {
+                return true
+            }
+            return (this.seconds - 1) < this.highscoresNewbieNoFlags[this.highscoresNewbieNoFlags.length - 1]
+        }
+        if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
+            if (this.highscoresTrainedNoFlags.length < 10) {
+                return true
+            }
+            return (this.seconds - 1) < this.highscoresTrainedNoFlags[this.highscoresTrainedNoFlags.length - 1]
+        }
+        if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
+            if (this.highscoresExpertNoFlags.length < 10) {
+                return true
+            }
+            return (this.seconds - 1) < this.highscoresExpertNoFlags[this.highscoresExpertNoFlags.length - 1]
+        }
     }
 
     getName() {
@@ -477,31 +515,13 @@ class Game {
         return document.getElementById("skrivNavn").value
     }
 
-    saveHighscoreNewbie() {
-        this.highscoresNewbie.push({ name: this.getName(), score: this.seconds - 1 })
-        this.highscoresNewbie.sort((a, b) => { return a.score - b.score })
-        if (this.highscoresNewbie.length > 10) {
-            this.highscoresNewbie.pop()
+    saveHighscore(highscoreKey) {
+        this[highscoreKey].push({ name: this.getName(), score: this.seconds - 1 })
+        this[highscoreKey].sort((a, b) => { return a.score - b.score })
+        if (this[highscoreKey].length > 10) {
+            this[highscoreKey].pop()
         }
-        localStorage.highscoresNewbie = JSON.stringify(this.highscoresNewbie)
-    }
-
-    saveHighscoreTrained() {
-        this.highscoresTrained.push({ name: this.getName(), score: this.seconds - 1 })
-        this.highscoresTrained.sort((a, b) => { return a.score - b.score })
-        if (this.highscoresTrained.length > 10) {
-            this.highscoresTrained.pop()
-        }
-        localStorage.highscoresTrained = JSON.stringify(this.highscoresTrained)
-    }
-
-    saveHighscoreExpert() {
-        this.highscoresExpert.push({ name: this.getName(), score: this.seconds - 1 })
-        this.highscoresExpert.sort((a, b) => { return a.score - b.score })
-        if (this.highscoresExpert.length > 10) {
-            this.highscoresExpert.pop()
-        }
-        localStorage.highscoresExpert = JSON.stringify(this.highscoresExpert)
+        localStorage[highscoreKey] = JSON.stringify(this[highscoreKey])
     }
 
     loadHighscoreNewbie() {
@@ -521,6 +541,27 @@ class Game {
     loadHighscoreExpert() {
         if (localStorage.highscoresExpert) {
             return JSON.parse(localStorage.highscoresExpert)
+        }
+        return []
+    }
+
+    loadHighscoreNewbieNoFlags() {
+        if (localStorage.highscoresNewbieNoFlags) {
+            return JSON.parse(localStorage.highscoresNewbieNoFlags)
+        }
+        return []
+    }
+
+    loadHighscoreTrainedNoFlags() {
+        if (localStorage.highscoresTrainedNoFlags) {
+            return JSON.parse(localStorage.highscoresTrainedNoFlags)
+        }
+        return []
+    }
+
+    loadHighscoreExpertNoFlags() {
+        if (localStorage.highscoresExpertNoFlags) {
+            return JSON.parse(localStorage.highscoresExpertNoFlags)
         }
         return []
     }
