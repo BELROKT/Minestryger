@@ -12,12 +12,12 @@ class Game {
         this.bombsMarked = 0
         this.timerId
         this.fields = []
-        this.highscoresNewbie = this.loadHighscoreNewbie()
-        this.highscoresTrained = this.loadHighscoreTrained()
-        this.highscoresExpert = this.loadHighscoreExpert()
-        this.highscoresNewbieNoFlags = this.loadHighscoreNewbie()
-        this.highscoresTrainedNoFlags = this.loadHighscoreTrained()
-        this.highscoresExpertNoFlags = this.loadHighscoreExpert()
+        this.highscoresNewbie = this.loadHighscore("highscoresNewbie")
+        this.highscoresTrained = this.loadHighscore("highscoresTrained")
+        this.highscoresExpert = this.loadHighscore("highscoresExpert")
+        this.highscoresNewbieNoFlags = this.loadHighscore("highscoresNewbieNoFlags")
+        this.highscoresTrainedNoFlags = this.loadHighscore("highscoresTrainedNoFlags")
+        this.highscoresExpertNoFlags = this.loadHighscore("highscoresExpertNoFlags")
         this.rightMouseDown = false
         this.middleMouseDown = false
         this.leftMouseDown = false
@@ -418,94 +418,81 @@ class Game {
 
     updateHighscore() {
         if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
-            this.saveHighscore("highscoreNewbie")
+            if (this.allowFlags) {
+                this.saveHighscore("highscoresNewbie")
+            }
+            else {
+                this.saveHighscore("highscoresNewbieNoFlags")
+            }
         }
         if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
-            this.saveHighscore("highscoreTrained")
+            if (this.allowFlags) {
+                this.saveHighscore("highscoresTrained")
+            }
+            else {
+                this.saveHighscore("highscoresTrainedNoFlags")
+            }
         }
         if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
-            this.saveHighscore("highscoreExpert")
+            if (this.allowFlags) {
+                this.saveHighscore("highscoresExpert")
+            }
+            else {
+                this.saveHighscore("highscoresExpertNoFlags")
+            }
         }
         viewStats()
         this.showHighscore()
         document.getElementById("bedsteTidNavn").style.display = "none"
     }
 
+    showHighscoreFor(group, highscoreKey, id) {
+        var text = group + "\n"
+        for (var i = 0; i < this[highscoreKey].length; i += 1) {
+            text += this[highscoreKey][i].name + ": " + this[highscoreKey][i].score + "\n"
+        }
+        document.getElementById(id).innerHTML = text
+    }
+
     showHighscore() {
-        var text = "Begynder\n"
-        for (var i = 0; i < this.highscoresNewbie.length; i += 1) {
-            text += this.highscoresNewbie[i].name + ": " + this.highscoresNewbie[i].score + "\n"
-        }
-        document.getElementById("bestTimeNewbie").innerHTML = text
+        this.showHighscoreFor("Begynder", "highscoresNewbie", "bestTimeNewbie")
+        this.showHighscoreFor("Øvet", "highscoresTrained", "bestTimeTrained")
+        this.showHighscoreFor("Ekspert", "highscoresExpert", "bestTimeExpert")
+        this.showHighscoreFor("Begynder", "highscoresNewbieNoFlags", "bestTimeNewbieNoFlags")
+        this.showHighscoreFor("Øvet", "highscoresTrainedNoFlags", "bestTimeTrainedNoFlags")
+        this.showHighscoreFor("Ekspert", "highscoresExpertNoFlags", "bestTimeExpertNoFlags")
+    }
 
-        text = "Øvet\n"
-        for (var i = 0; i < this.highscoresTrained.length; i += 1) {
-            text += this.highscoresTrained[i].name + ": " + this.highscoresTrained[i].score + "\n"
+    isNewScoreHighscoreFor(width, height, bombCount, allowFlags, highscoreKey) {
+        if (this.width == width && this.height == height && this.bombCount == bombCount && this.allowFlags == allowFlags) {
+            if (this[highscoreKey].length < 10) {
+                return true
+            }
+            return (this.seconds - 1) < this[highscoreKey][this[highscoreKey].length - 1]
         }
-        document.getElementById("bestTimeTrained").innerHTML = text
-
-        text = "Ekspert\n"
-        for (var i = 0; i < this.highscoresExpert.length; i += 1) {
-            text += this.highscoresExpert[i].name + ": " + this.highscoresExpert[i].score + "\n"
-        }
-        document.getElementById("bestTimeExpert").innerHTML = text
-
-        var text = "Begynder\n"
-        for (var i = 0; i < this.highscoresNewbieNoFlags.length; i += 1) {
-            text += this.highscoresNewbieNoFlags[i].name + ": " + this.highscoresNewbieNoFlags[i].score + "\n"
-        }
-        document.getElementById("bestTimeNewbieNoFlags").innerHTML = text
-
-        text = "Øvet\n"
-        for (var i = 0; i < this.highscoresTrainedNoFlags.length; i += 1) {
-            text += this.highscoresTrainedNoFlags[i].name + ": " + this.highscoresTrainedNoFlags[i].score + "\n"
-        }
-        document.getElementById("bestTimeTrainedNoFlags").innerHTML = text
-
-        text = "Ekspert\n"
-        for (var i = 0; i < this.highscoresExpertNoFlags.length; i += 1) {
-            text += this.highscoresExpertNoFlags[i].name + ": " + this.highscoresExpertNoFlags[i].score + "\n"
-        }
-        document.getElementById("bestTimeExpertNoFlags").innerHTML = text
+        return false
     }
 
     isNewScoreHighscore() {
-        if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
-            if (this.highscoresNewbie.length < 10) {
-                return true
-            }
-            return (this.seconds - 1) < this.highscoresNewbie[this.highscoresNewbie.length - 1]
+        if (this.isNewScoreHighscoreFor(9, 9, 10, true, "highscoresNewbie")) {
+            return true
         }
-        if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
-            if (this.highscoresTrained.length < 10) {
-                return true
-            }
-            return (this.seconds - 1) < this.highscoresTrained[this.highscoresTrained.length - 1]
+        if (this.isNewScoreHighscoreFor(16, 16, 40, true, "highscoresTrained")) {
+            return true
         }
-        if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
-            if (this.highscoresExpert.length < 10) {
-                return true
-            }
-            return (this.seconds - 1) < this.highscoresExpert[this.highscoresExpert.length - 1]
+        if (this.isNewScoreHighscoreFor(30, 16, 99, true, "highscoresExpert")) {
+            return true
         }
-        if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
-            if (this.highscoresNewbieNoFlags.length < 10) {
-                return true
-            }
-            return (this.seconds - 1) < this.highscoresNewbieNoFlags[this.highscoresNewbieNoFlags.length - 1]
+        if (this.isNewScoreHighscoreFor(9, 9, 10, false, "highscoresNewbieNoFlags")) {
+            return true
         }
-        if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
-            if (this.highscoresTrainedNoFlags.length < 10) {
-                return true
-            }
-            return (this.seconds - 1) < this.highscoresTrainedNoFlags[this.highscoresTrainedNoFlags.length - 1]
+        if (this.isNewScoreHighscoreFor(16, 16, 40, false, "highscoresTrainedNoFlags")) {
+            return true
         }
-        if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
-            if (this.highscoresExpertNoFlags.length < 10) {
-                return true
-            }
-            return (this.seconds - 1) < this.highscoresExpertNoFlags[this.highscoresExpertNoFlags.length - 1]
+        if (this.isNewScoreHighscoreFor(30, 16, 99, false, "highscoresExpertNoFlags")) {
+            return true
         }
+        return false
     }
 
     getName() {
@@ -524,44 +511,9 @@ class Game {
         localStorage[highscoreKey] = JSON.stringify(this[highscoreKey])
     }
 
-    loadHighscoreNewbie() {
-        if (localStorage.highscoresNewbie) {
-            return JSON.parse(localStorage.highscoresNewbie)
-        }
-        return []
-    }
-
-    loadHighscoreTrained() {
-        if (localStorage.highscoresTrained) {
-            return JSON.parse(localStorage.highscoresTrained)
-        }
-        return []
-    }
-
-    loadHighscoreExpert() {
-        if (localStorage.highscoresExpert) {
-            return JSON.parse(localStorage.highscoresExpert)
-        }
-        return []
-    }
-
-    loadHighscoreNewbieNoFlags() {
-        if (localStorage.highscoresNewbieNoFlags) {
-            return JSON.parse(localStorage.highscoresNewbieNoFlags)
-        }
-        return []
-    }
-
-    loadHighscoreTrainedNoFlags() {
-        if (localStorage.highscoresTrainedNoFlags) {
-            return JSON.parse(localStorage.highscoresTrainedNoFlags)
-        }
-        return []
-    }
-
-    loadHighscoreExpertNoFlags() {
-        if (localStorage.highscoresExpertNoFlags) {
-            return JSON.parse(localStorage.highscoresExpertNoFlags)
+    loadHighscore(highscoreKey) {
+        if (localStorage[highscoreKey]) {
+            return JSON.parse(localStorage[highscoreKey])
         }
         return []
     }
