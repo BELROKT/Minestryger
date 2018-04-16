@@ -22,6 +22,7 @@ class Game {
         this.middleMouseDown = false
         this.leftMouseDown = false
         this.allowFlags = true
+        this.lastScore = {}
 
         this.setTempWidth()
 
@@ -46,6 +47,7 @@ class Game {
         this.updateBombsLeft()
 
         this.setTempWidth()
+        document.getElementById("bedsteTidNavn").style.display = "none"
 
         this.canvas.width = this.width * (this.size)
         this.canvas.height = this.height * (this.size)
@@ -409,6 +411,7 @@ class Game {
                 if (this.isNewScoreHighscore()) {
                     document.getElementById("bedsteTidNavn").style.display = ""
                     viewStats()
+                    this.updateHighscore()
                     this.showHighscore()
                 }
             }
@@ -443,6 +446,12 @@ class Game {
         }
         viewStats()
         this.showHighscore()
+    }
+
+    updateName() {
+        this.lastScore.name = this.getName()
+        viewStats()
+        this.showHighscore()
         document.getElementById("bedsteTidNavn").style.display = "none"
     }
 
@@ -468,7 +477,7 @@ class Game {
             if (this[highscoreKey].length < 10) {
                 return true
             }
-            return (this.seconds - 1) < this[highscoreKey][this[highscoreKey].length - 1]
+            return (this.seconds - 1) < this[highscoreKey][this[highscoreKey].length - 1].score
         }
         return false
     }
@@ -503,7 +512,8 @@ class Game {
     }
 
     saveHighscore(highscoreKey) {
-        this[highscoreKey].push({ name: this.getName(), score: this.seconds - 1 })
+        this.lastScore = { name: this.getName(), score: this.seconds - 1 }
+        this[highscoreKey].push(this.lastScore)
         this[highscoreKey].sort((a, b) => { return a.score - b.score })
         if (this[highscoreKey].length > 10) {
             this[highscoreKey].pop()
