@@ -521,11 +521,49 @@ class Game {
         localStorage[highscoreKey] = JSON.stringify(this[highscoreKey])
     }
 
+    storeHighscores() {
+        localStorage.highscoresNewbie = JSON.stringify(this.highscoresNewbie)
+        localStorage.highscoresTrained = JSON.stringify(this.highscoresTrained)
+        localStorage.highscoresExpert = JSON.stringify(this.highscoresExpert)
+        localStorage.highscoresNewbieNoFlags = JSON.stringify(this.highscoresNewbieNoFlags)
+        localStorage.highscoresTrainedNoFlags = JSON.stringify(this.highscoresTrainedNoFlags)
+        localStorage.highscoresExpertNoFlags = JSON.stringify(this.highscoresExpertNoFlags)
+    }
+
     loadHighscore(highscoreKey) {
         if (localStorage[highscoreKey]) {
             return JSON.parse(localStorage[highscoreKey])
         }
         return []
+    }
+
+    resetHighscores(keyword) {
+        if (keyword == "Newbie") {
+            this.highscoresNewbie = []
+        }
+        if (keyword == "Trained") {
+            this.highscoresTrained = []
+        }
+        if (keyword == "Expert") {
+            this.highscoresExpert = []
+        }
+        if (keyword == "NewbieNoFlags") {
+            this.highscoresNewbieNoFlags = []
+        }
+        if (keyword == "TrainedNoFlags") {
+            this.highscoresTrainedNoFlags = []
+        }
+        if (keyword == "ExpertNoFlags") {
+            this.highscoresExpertNoFlags = []
+        }
+        if (keyword == "All") {
+            this.highscoresNewbie = []
+            this.highscoresTrained = []
+            this.highscoresExpert = []
+            this.highscoresNewbieNoFlags = []
+            this.highscoresTrainedNoFlags = []
+            this.highscoresExpertNoFlags = []
+        }
     }
 
     hasWon() {
