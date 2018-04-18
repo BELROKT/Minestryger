@@ -53,8 +53,17 @@ input {
     width: 100px;
     text-align: center;
 }
+.gruppeTitler {
+    width: 301px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: cadetblue;
+    font-weight: bold;
+}
 .grupper {
-    width: 20%;
+    width: 301px;
     display: flex;
     justify-content: center;
 }
