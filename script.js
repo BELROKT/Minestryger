@@ -672,13 +672,11 @@ function randomColor() {
 function viewSettings() {
     document.getElementById("værdier").style.display = ""
     document.getElementById("statistik").style.display = "none"
-    document.getElementById("statistikTitler").style.display = "none"
 }
 
 function viewStats() {
     document.getElementById("statistik").style.display = ""
     document.getElementById("værdier").style.display = "none"
-    document.getElementById("statistikTitler").style.display = ""
 }
 
 var game = new Game()

@@ -50,12 +50,12 @@ input {
 }
 .bestTime {
     white-space: pre;
-    width: 100px;
+    width: 200px;
     text-align: center;
 }
 .gruppeTitler {
-    width: 301px;
-    height: 30px;
+    width: 602px;
+    height: 24px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -63,7 +63,7 @@ input {
     font-weight: bold;
 }
 .grupper {
-    width: 301px;
+    width: 602px;
     display: flex;
     justify-content: center;
 }
