@@ -66,6 +66,12 @@ class Game {
             }
             ytal += 1
             xtal = 0
+
+            document.body.style.backgroundColor = "lightblue"
+            var elements = document.getElementsByClassName('gruppeTitler');
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].style.backgroundColor = "cadetblue";
+            }
         }
     }
 
@@ -413,6 +419,11 @@ class Game {
                     viewStats()
                     this.updateHighscore()
                     this.showHighscore()
+                }
+                document.body.style.backgroundColor = "darkseagreen"
+                var elements = document.getElementsByClassName('gruppeTitler');
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].style.backgroundColor = "olivedrab";
                 }
             }
             this.stopTimer()
