@@ -469,9 +469,18 @@ class Game {
     showHighscoreFor(group, highscoreKey, id) {
         var text = group + "\n"
         for (var i = 0; i < this[highscoreKey].length; i += 1) {
-            text += this[highscoreKey][i].name + ": " + this[highscoreKey][i].score + "\n"
+            var date = this.formatDate(this[highscoreKey][i].date)
+            text += "<span title=\"" + date + "\">" + this[highscoreKey][i].name + ": " + this[highscoreKey][i].score + "</span>\n"
         }
         document.getElementById(id).innerHTML = text
+    }
+
+    formatDate(date) {
+        if (!date) {
+            return ""
+        }
+        date = new Date(date)
+        return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
     }
 
     showHighscore() {
@@ -523,7 +532,7 @@ class Game {
     }
 
     saveHighscore(highscoreKey) {
-        this.lastScore = { name: this.getName(), score: this.seconds - 1 }
+        this.lastScore = { name: this.getName(), score: this.seconds - 1, date: new Date() }
         this[highscoreKey].push(this.lastScore)
         this[highscoreKey].sort((a, b) => { return a.score - b.score })
         if (this[highscoreKey].length > 10) {
