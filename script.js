@@ -464,6 +464,7 @@ class Game {
         viewStats()
         this.showHighscore()
         document.getElementById("bedsteTidNavn").style.display = "none"
+        this.storeHighscores()
     }
 
     showHighscoreFor(group, highscoreKey, id) {
