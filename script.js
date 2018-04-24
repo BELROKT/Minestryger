@@ -424,7 +424,7 @@ class Game {
             if (!this.hasFinished()) {
                 var now = new Date()
                 this.seconds += Math.round((now.getTime() - this.lastUpdate.getTime()) / 10) / 100
-                
+
                 if (this.isNewScoreHighscore()) {
                     document.getElementById("bedsteTidNavn").style.display = ""
                     viewStats()
@@ -432,6 +432,7 @@ class Game {
                     this.showHighscore()
                 }
                 document.body.style.backgroundColor = "darkseagreen"
+                document.getElementById("værdikasse").style.backgroundColor = "olivedrab"
                 var elements = document.getElementsByClassName('gruppeTitler');
                 for (var i = 0; i < elements.length; i++) {
                     elements[i].style.backgroundColor = "olivedrab";
@@ -482,7 +483,7 @@ class Game {
         var text = group + "\n"
         for (var i = 0; i < this[highscoreKey].length; i += 1) {
             var date = this.formatDate(this[highscoreKey][i].date)
-            text += "<span title=\"" + date + "\">" + this[highscoreKey][i].name + ": " + this[highscoreKey][i].score + "</span>\n"
+            text += "<span title=\"" + date + "\">" + this[highscoreKey][i].name + ": " + this[highscoreKey][i].score.toLocaleString(undefined, { minimumFractionDigits: 2 }) + "</span>\n"
         }
         document.getElementById(id).innerHTML = text
     }
