@@ -36,6 +36,13 @@ class Game {
         this.canvas.addEventListener("mousemove", (event) => { this.mouseMove(event) })
         this.canvas.addEventListener("mouseleave", (event) => { this.mouseLeave(event) })
         this.canvas.addEventListener("contextmenu", (event) => { event.preventDefault() })
+        this.canvas.addEventListener("click", (event) => { event.preventDefault(); event.stopPropagation() }, true)
+        document.body.addEventListener("mousedown", (event) => {
+            if (event.button == 1) {
+                event.preventDefault()
+                return false
+            }
+        }, true)
     }
 
     clearMap() {
