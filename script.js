@@ -23,6 +23,7 @@ class Game {
         this.leftMouseDown = false
         this.allowFlags = true
         this.lastScore = {}
+        this.lastUpdate = new Date()
 
         this.setTempWidth()
 
@@ -421,6 +422,9 @@ class Game {
         }
         if (this.hasWon()) {
             if (!this.hasFinished()) {
+                var now = new Date()
+                this.seconds += Math.round((now.getTime() - this.lastUpdate.getTime()) / 10) / 100
+                
                 if (this.isNewScoreHighscore()) {
                     document.getElementById("bedsteTidNavn").style.display = ""
                     viewStats()
@@ -661,6 +665,7 @@ class Game {
     timer() {
         document.getElementById("timer").innerHTML = this.seconds
         this.seconds += 1
+        this.lastUpdate = new Date()
     }
 
     updateBombsLeft() {
