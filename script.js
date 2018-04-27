@@ -76,6 +76,7 @@ class Game {
             xtal = 0
 
             document.body.style.backgroundColor = "lightblue"
+            document.getElementById("værdikasse").style.backgroundColor = "cadetblue"
             var elements = document.getElementsByClassName('gruppeTitler');
             for (var i = 0; i < elements.length; i++) {
                 elements[i].style.backgroundColor = "cadetblue";
