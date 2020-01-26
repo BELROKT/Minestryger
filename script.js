@@ -1,5 +1,8 @@
 "use strict"
 
+const highscoreSaveLength = 100
+const highscoreShowLength = 10
+
 class Game {
     constructor() {
         this.canvas = document.getElementById("kanvas")
@@ -455,32 +458,40 @@ class Game {
     }
 
     updateHighscore() {
+        const scoreType = this.getHighscoreType()
+        if(scoreType !== "none"){
+            this.saveHighscore(scoreType)
+        }
+        viewStats()
+        this.showHighscore()
+    }
+
+    getHighscoreType(){
         if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
             if (this.allowFlags) {
-                this.saveHighscore("highscoresNewbie")
+                return "highscoresNewbie"
             }
             else {
-                this.saveHighscore("highscoresNewbieNoFlags")
+                return "highscoresNewbieNoFlags"
             }
         }
         if (this.width == 16 && this.height == 16 && this.bombCount == 40) {
             if (this.allowFlags) {
-                this.saveHighscore("highscoresTrained")
+                return "highscoresTrained"
             }
             else {
-                this.saveHighscore("highscoresTrainedNoFlags")
+                return "highscoresTrainedNoFlags"
             }
         }
         if (this.width == 30 && this.height == 16 && this.bombCount == 99) {
             if (this.allowFlags) {
-                this.saveHighscore("highscoresExpert")
+                return "highscoresExpert"
             }
             else {
-                this.saveHighscore("highscoresExpertNoFlags")
+                return "highscoresExpertNoFlags"
             }
         }
-        viewStats()
-        this.showHighscore()
+        return "none"
     }
 
     updateName() {
@@ -493,7 +504,7 @@ class Game {
 
     showHighscoreFor(group, highscoreKey, id) {
         var text = group + "\n"
-        for (var i = 0; i < this[highscoreKey].length; i += 1) {
+        for (var i = 0; i < this[highscoreKey].length && i < highscoreShowLength; i += 1) {
             var date = this.formatDate(this[highscoreKey][i].date)
             text += "<span title=\"" + date + "\">" + this[highscoreKey][i].name + ": " + this[highscoreKey][i].score.toLocaleString(undefined, { minimumFractionDigits: 2 }) + "</span>\n"
         }
@@ -517,36 +528,19 @@ class Game {
         this.showHighscoreFor("Ekspert", "highscoresExpertNoFlags", "bestTimeExpertNoFlags")
     }
 
-    isNewScoreHighscoreFor(width, height, bombCount, allowFlags, highscoreKey) {
-        if (this.width == width && this.height == height && this.bombCount == bombCount && this.allowFlags == allowFlags) {
-            if (this[highscoreKey].length < 10) {
-                return true
-            }
-            return (this.seconds - 1) < this[highscoreKey][this[highscoreKey].length - 1].score
+    isNewScoreHighscore() {
+        const highscoreKey = this.getHighscoreType()
+        if(highscoreKey === "none") {
+            return false
         }
-        return false
+        return this.isNewScoreHighscoreFor(highscoreKey)
     }
 
-    isNewScoreHighscore() {
-        if (this.isNewScoreHighscoreFor(9, 9, 10, true, "highscoresNewbie")) {
+    isNewScoreHighscoreFor(highscoreKey) {
+        if (this[highscoreKey].length < highscoreSaveLength) {
             return true
         }
-        if (this.isNewScoreHighscoreFor(16, 16, 40, true, "highscoresTrained")) {
-            return true
-        }
-        if (this.isNewScoreHighscoreFor(30, 16, 99, true, "highscoresExpert")) {
-            return true
-        }
-        if (this.isNewScoreHighscoreFor(9, 9, 10, false, "highscoresNewbieNoFlags")) {
-            return true
-        }
-        if (this.isNewScoreHighscoreFor(16, 16, 40, false, "highscoresTrainedNoFlags")) {
-            return true
-        }
-        if (this.isNewScoreHighscoreFor(30, 16, 99, false, "highscoresExpertNoFlags")) {
-            return true
-        }
-        return false
+        return (this.seconds - 1) < this[highscoreKey][this[highscoreKey].length - 1].score
     }
 
     getName() {
@@ -560,7 +554,7 @@ class Game {
         this.lastScore = { name: this.getName(), score: this.seconds - 1, date: new Date() }
         this[highscoreKey].push(this.lastScore)
         this[highscoreKey].sort((a, b) => { return a.score - b.score })
-        if (this[highscoreKey].length > 10) {
+        if (this[highscoreKey].length > highscoreSaveLength) {
             this[highscoreKey].pop()
         }
         localStorage[highscoreKey] = JSON.stringify(this[highscoreKey])
