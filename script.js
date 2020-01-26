@@ -206,7 +206,7 @@ class Game {
         if (event.button == 0) {
             this.leftMouseDown = false
 
-            if(!this.activateOnMouseDown){
+            if (!this.activateOnMouseDown) {
                 this.leftClick(pos.x, pos.y)
             }
 
@@ -235,7 +235,7 @@ class Game {
         }
         if (event.button == 0) {
             this.leftMouseDown = true
-            if(this.activateOnMouseDown){
+            if (this.activateOnMouseDown) {
                 this.leftClick(pos.x, pos.y)
             }
         }
@@ -459,14 +459,14 @@ class Game {
 
     updateHighscore() {
         const scoreType = this.getHighscoreType()
-        if(scoreType !== "none"){
+        if (scoreType !== "none") {
             this.saveHighscore(scoreType)
         }
         viewStats()
         this.showHighscore()
     }
 
-    getHighscoreType(){
+    getHighscoreType() {
         if (this.width == 9 && this.height == 9 && this.bombCount == 10) {
             if (this.allowFlags) {
                 return "highscoresNewbie"
@@ -530,7 +530,7 @@ class Game {
 
     isNewScoreHighscore() {
         const highscoreKey = this.getHighscoreType()
-        if(highscoreKey === "none") {
+        if (highscoreKey === "none") {
             return false
         }
         return this.isNewScoreHighscoreFor(highscoreKey)
@@ -602,6 +602,45 @@ class Game {
             this.highscoresNewbieNoFlags = []
             this.highscoresTrainedNoFlags = []
             this.highscoresExpertNoFlags = []
+        }
+    }
+
+    export() {
+        document.getElementById("scorePorting").value = JSON.stringify(this.gatherScores(), undefined, "\t")
+    }
+
+    import() {
+        const scores = JSON.parse(document.getElementById("scorePorting").value)
+        localStorage.backupScores = JSON.stringify(this.gatherScores())
+        for (const highscoreKey in scores) {
+            this.zipScores(scores[highscoreKey], this[highscoreKey])
+        }
+        this.storeHighscores()
+        this.showHighscore()
+    }
+
+    zipScores(importedScores, localScores) {
+        for (const score of importedScores) {
+            const stringScore = JSON.stringify(score)
+            if (localScores.find(x => JSON.stringify(x) === stringScore)) {
+                continue
+            }
+            localScores.push(score)
+        }
+        localScores.sort((a, b) => { return a.score - b.score })
+        while (localScores.length > highscoreSaveLength) {
+            localScores.pop()
+        }
+    }
+
+    gatherScores() {
+        return {
+            highscoresNewbie: this.highscoresNewbie,
+            highscoresTrained: this.highscoresTrained,
+            highscoresExpert: this.highscoresExpert,
+            highscoresNewbieNoFlags: this.highscoresNewbieNoFlags,
+            highscoresTrainedNoFlags: this.highscoresTrainedNoFlags,
+            highscoresExpertNoFlags: this.highscoresExpertNoFlags
         }
     }
 
