@@ -24,6 +24,7 @@
 }
 .settingsRow {
     display: inline-block;
+    width: 100%;
 }
 #Genstart {
     float: right;

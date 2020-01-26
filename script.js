@@ -22,6 +22,7 @@ class Game {
         this.middleMouseDown = false
         this.leftMouseDown = false
         this.allowFlags = true
+        this.activateOnMouseDown = false
         this.lastScore = {}
         this.lastUpdate = new Date()
 
@@ -143,6 +144,7 @@ class Game {
         this.updateHeight()
         this.updateBombCount()
         this.updateAllowFlags()
+        this.updateActivateOnMouseDown()
         this.clearMap()
     }
 
@@ -174,6 +176,10 @@ class Game {
         this.allowFlags = document.getElementById("mineFlag").checked
     }
 
+    updateActivateOnMouseDown() {
+        this.activateOnMouseDown = document.getElementById("activateOnMouseDown").checked
+    }
+
     updateSettings(width, height, bombCount) {
         document.getElementById("vidde").value = width
         document.getElementById("højde").value = height
@@ -197,7 +203,9 @@ class Game {
         if (event.button == 0) {
             this.leftMouseDown = false
 
-            this.leftClick(pos.x, pos.y)
+            if(!this.activateOnMouseDown){
+                this.leftClick(pos.x, pos.y)
+            }
 
             if (this.rightMouseDown) {
                 this.middleClick(pos.x, pos.y)
@@ -224,6 +232,9 @@ class Game {
         }
         if (event.button == 0) {
             this.leftMouseDown = true
+            if(this.activateOnMouseDown){
+                this.leftClick(pos.x, pos.y)
+            }
         }
         if (event.button == 1) {
             this.middleMouseDown = true

@@ -29,7 +29,7 @@
 		<button id="gemNyTid" onclick="game.updateName()"> Gem </button>
 	</div>
 	<div id="værdier" class="divKlasse" style="display: none;">
-		<div id="værdikasse" style="width: 120px; background-color: cadetblue; padding: 5px; box-sizing: content-box;">
+		<div id="værdikasse" style="width: 150px; background-color: cadetblue; padding: 5px; box-sizing: content-box;">
 			<div class="settingsRow">
 				<label>Vidde</label>
 				<input id="vidde" type="number" value="30" autocomplete="off">
@@ -44,6 +44,10 @@
 			</div>
 			<label>Tillad flag</label>
 			<input id="mineFlag" type="checkbox" checked autocomplete="off">
+			<div class="settingsRow">
+				<label>Tidligt klik</label>
+				<input id="activateOnMouseDown" type="checkbox" autocomplete="off">
+			</div>
 			<button style="width: 60%; margin: 5% 20%;" onclick="game.updateSettings(9, 9, 10)">Begynder</button>
 			<button style="width: 60%; margin: 0 20%;" onclick="game.updateSettings(16, 16, 40)">Øvet</button>
 			<button style="width: 60%; margin: 5% 20%;" onclick="game.updateSettings(30, 16, 99)">Ekspert</button>
